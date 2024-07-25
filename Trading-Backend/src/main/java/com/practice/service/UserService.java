@@ -42,6 +42,9 @@ public class UserService implements IUserService, UserDetailsService {
 	
 	@Autowired
 	private ITwoFactorOTPService twoFactorOTPService;
+	
+	@Autowired
+	private IEmailService emailService;
 
 	@Override
 	public AuthResponse register(UserDTO userDTO) throws Exception {
@@ -95,6 +98,7 @@ public class UserService implements IUserService, UserDetailsService {
 				twoFactorOTPService.deleteTwoFactorOtp(oldTwoFactorOTPDTO);
 			}
 			TwoFactorOTPDTO newTwoFactorOTPDTO = twoFactorOTPService.createTwoFactorOtp(userDTO, otp, jwt);
+			emailService.sendVerificationOtpEmail(userDTO.getEmail(), otp);
 			response.setSession(newTwoFactorOTPDTO.getId());
 			return response; 
 		}
