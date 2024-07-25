@@ -30,7 +30,6 @@ public class AuthController {
 	public ResponseEntity<AuthResponse> register(@RequestBody UserDTO userDTO) throws Exception {
 		AuthResponse response = userService.register(userDTO);
 		return new ResponseEntity<>(response, HttpStatus.CREATED);
-
 	}
 
 	@PostMapping("/login")
