@@ -5,6 +5,7 @@ package com.practice.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,13 @@ import org.springframework.stereotype.Service;
 
 import com.practice.config.JwtProvider;
 import com.practice.dto.AuthResponse;
+import com.practice.dto.TwoFactorAuthDTO;
 import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
+import com.practice.entity.TwoFactorAuthEntity;
+import com.practice.entity.TwoFactorOTPEntity;
 import com.practice.entity.UserEntity;
+import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 import com.practice.repository.UserRepository;
 import com.practice.utils.OtpUtility;
 
@@ -93,7 +98,7 @@ public class UserService implements IUserService, UserDetailsService {
 			response.setMessage("Two Factor Auth is Enabled");
 			response.setTwoFactorAuthEnable(true);
 			String otp = OtpUtility.generateOtp();
-			TwoFactorOTPDTO oldTwoFactorOTPDTO = twoFactorOTPService.findByUser(userEntity.getId());
+			TwoFactorOTPDTO oldTwoFactorOTPDTO = twoFactorOTPService.findByUser(userEntity);
 			if(oldTwoFactorOTPDTO!=null) {
 				twoFactorOTPService.deleteTwoFactorOtp(oldTwoFactorOTPDTO);
 			}
@@ -123,6 +128,74 @@ public class UserService implements IUserService, UserDetailsService {
 			throw new BadCredentialsException("Invalid PassWord");
 		}
 		return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+	}
+
+	@Override
+	public AuthResponse verifySigningOtp(String otp, String id) throws Exception {
+		TwoFactorOTPDTO twoFactorOTPDTO = twoFactorOTPService.findById(id);
+		if(twoFactorOTPService.verifyTwoFactorOtp(twoFactorOTPDTO, otp)) {
+			AuthResponse response = new AuthResponse();
+			response.setMessage("Two Factor OTP authentication Verified");
+			response.setTwoFactorAuthEnable(true);
+			response.setJwt(twoFactorOTPDTO.getJwt());
+			return response;
+		}
+		throw new Exception("Invalid OTP");
+	}
+
+	@Override
+	public UserDTO findUserProfileByJwt(String jwt) throws Exception {
+		String email = JwtProvider.getEmailFromToken(jwt);
+		return findUserByEmail(email);
+	}
+
+	@Override
+	public UserDTO findUserByEmail(String email) throws Exception {
+		UserEntity userEntity = userRepository.findByEmail(email);
+		if(userEntity==null) {
+			throw new Exception("User Not Found");
+		}
+		return covertEntityToDTO(userEntity);
+	}
+
+	@Override
+	public UserDTO findUserById(Long userId) throws Exception {
+		Optional<UserEntity> userEntity=userRepository.findById(userId);
+		if(userEntity.isEmpty()) {
+			throw new Exception("User Not Found");
+		}
+		return covertEntityToDTO(userEntity.get());
+	}
+
+	@Override
+	public UserDTO enableTwoFactorAuthentocation(VERIFICATION_TYPE verificationType, String SendTo,UserDTO userDTO) {
+		UserEntity userEntity = new UserEntity();
+		TwoFactorAuthEntity twoFactorAuthEntity  = new TwoFactorAuthEntity();
+		BeanUtils.copyProperties(userDTO, userEntity);
+		twoFactorAuthEntity.setEnabled(true);
+		twoFactorAuthEntity.setSendTO(verificationType);
+		userEntity.setTwoFactorAuthEntity(twoFactorAuthEntity);
+		userEntity = userRepository.save(userEntity);
+		return covertEntityToDTO(userEntity);
+	}
+
+	@Override
+	public UserDTO updatepassword(UserDTO userDTO, String newPassword) {
+		UserEntity userEntity = new UserEntity();
+		BeanUtils.copyProperties(userDTO, userEntity);
+		userEntity.setPassword(newPassword);
+		userEntity = userRepository.save(userEntity);
+		return covertEntityToDTO(userEntity);
+	}
+	
+	public UserDTO covertEntityToDTO(UserEntity userEntity){
+		UserDTO userDTO =new UserDTO();
+		if(userEntity!=null) {
+			BeanUtils.copyProperties(userEntity, userDTO);
+			return userDTO;
+		}
+		return null;
+		
 	}
 
 }

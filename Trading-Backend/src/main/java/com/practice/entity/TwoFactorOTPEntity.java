@@ -22,7 +22,6 @@ import lombok.Data;
 public class TwoFactorOTPEntity {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private String Id;
 	
 	private String otp;

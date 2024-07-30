@@ -41,8 +41,9 @@ public class TwoFactorOTPService implements ITwoFactorOTPService {
 	}
 
 	@Override
-	public TwoFactorOTPDTO findByUser(Long userId) {
-		TwoFactorOTPEntity twoFactorOTPEntity=twoFactorOTPRepository.findByUserId(userId);
+	public TwoFactorOTPDTO findByUser(UserEntity userEntity) {
+		TwoFactorOTPEntity twoFactorOTPEntity=twoFactorOTPRepository.findByUser(userEntity);
+		
 		return covertEntityToDTO(twoFactorOTPEntity);
 	}
 
@@ -68,8 +69,12 @@ public class TwoFactorOTPService implements ITwoFactorOTPService {
 	
 	public TwoFactorOTPDTO covertEntityToDTO(TwoFactorOTPEntity twoFactorOTPEntity){
 		TwoFactorOTPDTO twoFactorOTPDTO =new TwoFactorOTPDTO();
-		BeanUtils.copyProperties(twoFactorOTPEntity, twoFactorOTPDTO);
-		return twoFactorOTPDTO;
+		if(twoFactorOTPEntity!=null) {
+			BeanUtils.copyProperties(twoFactorOTPEntity, twoFactorOTPDTO);
+			return twoFactorOTPDTO;
+		}
+		return null;
+		
 	}
 
 	

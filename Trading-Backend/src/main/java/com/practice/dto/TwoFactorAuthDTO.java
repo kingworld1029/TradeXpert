@@ -12,7 +12,9 @@ import lombok.Data;
  */
 @Data
 public class TwoFactorAuthDTO {
-	private boolean isEnabled = false;
+	private boolean enabled = false;
 
 	private VERIFICATION_TYPE sendTO;
+	
+	
 }

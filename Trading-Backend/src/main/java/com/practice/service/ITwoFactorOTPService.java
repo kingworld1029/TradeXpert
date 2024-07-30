@@ -5,6 +5,7 @@ package com.practice.service;
 
 import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
+import com.practice.entity.UserEntity;
 
 /**
  * 
@@ -13,7 +14,7 @@ public interface ITwoFactorOTPService {
 
 	TwoFactorOTPDTO createTwoFactorOtp(UserDTO user, String otp, String jwt );
 	
-	TwoFactorOTPDTO findByUser(Long userId);
+	TwoFactorOTPDTO findByUser(UserEntity userEntity);
 	
 	TwoFactorOTPDTO findById(String id);
 	

@@ -3,7 +3,6 @@
  */
 package com.practice.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -19,7 +18,7 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailService implements IEmailService {
 
-	@Autowired
+	
 	private JavaMailSender javaMailSender;
 
 	@Override

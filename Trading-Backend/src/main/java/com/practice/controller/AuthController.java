@@ -6,6 +6,7 @@ package com.practice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,13 @@ public class AuthController {
 	public ResponseEntity<AuthResponse> login(@RequestBody UserDTO userDTO) throws Exception {
 		AuthResponse response = userService.login(userDTO);
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+
+	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<AuthResponse> verifySigningOtp(@PathVariable String otp, @RequestParam  String id)throws Exception {	
+		AuthResponse response = userService.verifySigningOtp(otp,id);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
 	
