@@ -40,7 +40,7 @@ public class AuthController {
 
 	}
 	
-	@PostMapping("/login")
+	@PostMapping("/verifySigningOtp")
 	public ResponseEntity<AuthResponse> verifySigningOtp(@PathVariable String otp, @RequestParam  String id)throws Exception {	
 		AuthResponse response = userService.verifySigningOtp(otp,id);
 		return new ResponseEntity<>(response, HttpStatus.OK);
