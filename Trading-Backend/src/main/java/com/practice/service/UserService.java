@@ -6,9 +6,12 @@ package com.practice.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import com.practice.config.JwtProvider;
 import com.practice.dto.AuthResponse;
+import com.practice.dto.ForgotPasswordTokenDTO;
 import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
 import com.practice.entity.TwoFactorAuthEntity;
@@ -48,6 +52,9 @@ public class UserService implements IUserService, UserDetailsService {
 	
 	@Autowired
 	private IEmailService emailService;
+
+	@Autowired
+	private IForgotPasswordService forgotPasswordService;
 
 	@Override
 	public AuthResponse register(UserDTO userDTO) throws Exception {
@@ -194,6 +201,38 @@ public class UserService implements IUserService, UserDetailsService {
 		}
 		return null;
 		
+	}
+
+	@Override
+	public AuthResponse sendForgotPasswordOtp(ForgotPasswordTokenDTO requestDTO) throws Exception {
+		UserDTO userDTO = findUserByEmail(requestDTO.getSendTo());
+		String otp = OtpUtility.generateOtp();
+		UUID uuid =UUID.randomUUID();
+		String id= uuid.toString();
+		ForgotPasswordTokenDTO forgotPasswordTokenDTO =  forgotPasswordService.findByUser(userDTO.getId());
+		if(forgotPasswordTokenDTO==null) {
+			forgotPasswordTokenDTO = forgotPasswordService.createToken(userDTO, id, otp, requestDTO.getVerificationType(), requestDTO.getSendTo());
+		}
+		if (requestDTO.getVerificationType().equals(VERIFICATION_TYPE.EMAIL)) {
+			emailService.sendVerificationOtpEmail(userDTO.getEmail(), forgotPasswordTokenDTO.getOtp());
+		}
+		AuthResponse response = new AuthResponse();
+		response.setSession(forgotPasswordTokenDTO.getId());
+		response.setMessage("Forget Password Otp Sent SuccessFully");
+		return response;
+	}
+
+	@Override
+	public AuthResponse verifyForgotPasswordOtp(ForgotPasswordTokenDTO requestDTO, String id) throws Exception {
+		ForgotPasswordTokenDTO forgotPasswordTokenDTO =  forgotPasswordService.findById(id);
+		boolean isVerified = forgotPasswordTokenDTO.getOtp().equals(requestDTO.getOtp());
+		if(isVerified) {
+			updatepassword(forgotPasswordTokenDTO.getUser(), requestDTO.getPassword());
+			AuthResponse response = new AuthResponse();
+			response.setMessage("Password Updated SuccessFully");
+			return response;
+		}
+		throw new Exception("Wrong OTP");
 	}
 
 }

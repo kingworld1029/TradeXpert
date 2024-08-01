@@ -3,6 +3,8 @@
  */
 package com.practice.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +13,19 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.practice.dto.AuthResponse;
+import com.practice.dto.ForgotPasswordTokenDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.VerificationCodeDTO;
 import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 import com.practice.service.IEmailService;
+import com.practice.service.IForgotPasswordService;
 import com.practice.service.IUserService;
 import com.practice.service.IVerificationCodeService;
+import com.practice.utils.OtpUtility;
 
 /**
  * 
@@ -77,4 +84,5 @@ public class UserController {
 		throw new Exception("Wrong OTP");
 
 	}
+
 }

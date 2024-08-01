@@ -4,6 +4,7 @@
 package com.practice.service;
 
 import com.practice.dto.AuthResponse;
+import com.practice.dto.ForgotPasswordTokenDTO;
 import com.practice.dto.UserDTO;
 import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 
@@ -47,5 +48,20 @@ public interface IUserService {
 	UserDTO enableTwoFactorAuthentocation(VERIFICATION_TYPE verificationType, String SendTo, UserDTO userDTO);
 	
 	UserDTO updatepassword(UserDTO userDTO, String newPassword);
+
+	/**
+	 * @param requestDTO
+	 * @return
+	 * @throws Exception 
+	 */
+	AuthResponse sendForgotPasswordOtp(ForgotPasswordTokenDTO requestDTO) throws Exception;
+
+	/**
+	 * @param requestDTO
+	 * @param id
+	 * @return
+	 * @throws Exception 
+	 */
+	AuthResponse verifyForgotPasswordOtp(ForgotPasswordTokenDTO requestDTO, String id) throws Exception;
 
 }
