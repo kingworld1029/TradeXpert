@@ -18,27 +18,26 @@ import org.springframework.web.cors.CorsConfigurationSource;
  */
 @Configuration
 public class AppConfig {
-	
+
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-		http.sessionManagement(management->management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(Authorize->Authorize.requestMatchers("/api/**").authenticated()
-					.anyRequest().permitAll())
-			.addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
-			.csrf(csrf->csrf.disable())
-			.cors(cors->cors.configurationSource(corsConfigurationSource()));
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(
+						Authorize -> Authorize.requestMatchers("/api/**").authenticated().anyRequest().permitAll())
+				.addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class).csrf(csrf -> csrf.disable())
+				.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
-		
+
 	}
-	
+
 	private CorsConfigurationSource corsConfigurationSource() {
 		return null;
-		
+
 	}
-	
+
 	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 }

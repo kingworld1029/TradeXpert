@@ -23,11 +23,9 @@ import org.springframework.stereotype.Service;
 
 import com.practice.config.JwtProvider;
 import com.practice.dto.AuthResponse;
-import com.practice.dto.TwoFactorAuthDTO;
 import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
 import com.practice.entity.TwoFactorAuthEntity;
-import com.practice.entity.TwoFactorOTPEntity;
 import com.practice.entity.UserEntity;
 import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 import com.practice.repository.UserRepository;
