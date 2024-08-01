@@ -37,7 +37,6 @@ public class AuthController {
 	public ResponseEntity<AuthResponse> login(@RequestBody UserDTO userDTO) throws Exception {
 		AuthResponse response = userService.login(userDTO);
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-
 	}
 	
 	@PostMapping("/verifySigningOtp/otp/{otp}")
