@@ -5,6 +5,7 @@ package com.practice.utils;
 
 import org.springframework.beans.BeanUtils;
 
+import com.practice.dto.AssetDTO;
 import com.practice.dto.CoinDTO;
 import com.practice.dto.OrderDTO;
 import com.practice.dto.OrderItemDTO;
@@ -12,6 +13,7 @@ import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.VerificationCodeDTO;
 import com.practice.dto.WalletDTO;
+import com.practice.entity.AssetEntity;
 import com.practice.entity.CoinEntity;
 import com.practice.entity.OrderEntity;
 import com.practice.entity.OrderItemEntity;
@@ -196,6 +198,38 @@ public class ConverterUtility {
 		if (coinDTO != null) {
 			BeanUtils.copyProperties(coinDTO, coinEntity);
 			return coinEntity;
+		}
+		return null;
+
+	}
+
+	public static AssetDTO convertAssetEntityToDTO(AssetEntity assetEntity) {
+		AssetDTO assetDTO = new AssetDTO();
+		if (assetEntity != null) {
+			BeanUtils.copyProperties(assetEntity, assetDTO);
+			if (assetEntity.getUserEntity() != null) {
+				assetDTO.setUserDTO(convertUserEntityToDTO(assetEntity.getUserEntity()));
+			}
+			if (assetEntity.getCoinEntity() != null) {
+				assetDTO.setCoinDTO(convertCoinEntityToDTO(assetEntity.getCoinEntity()));
+			}
+			return assetDTO;
+		}
+		return null;
+
+	}
+
+	public static AssetEntity convertAssetDTOToEntity(AssetDTO assetDTO) {
+		AssetEntity assetEntity = new AssetEntity();
+		if (assetDTO != null) {
+			BeanUtils.copyProperties(assetDTO, assetEntity);
+			if (assetDTO.getUserDTO() != null) {
+				assetEntity.setUserEntity(convertUserDTOToEntity(assetDTO.getUserDTO()));
+			}
+			if (assetDTO.getCoinDTO() != null) {
+				assetEntity.setCoinEntity(convertCoinDTOToEntity(assetDTO.getCoinDTO()));
+			}
+			return assetEntity;
 		}
 		return null;
 
