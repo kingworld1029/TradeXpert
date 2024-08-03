@@ -33,6 +33,7 @@ import com.practice.entity.TwoFactorAuthEntity;
 import com.practice.entity.UserEntity;
 import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 import com.practice.repository.UserRepository;
+import com.practice.utils.ConverterUtility;
 import com.practice.utils.OtpUtility;
 
 /**
@@ -40,16 +41,16 @@ import com.practice.utils.OtpUtility;
  */
 @Service
 public class UserService implements IUserService, UserDetailsService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
-    private PasswordEncoder passwordEncoder;
-	
+	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	private ITwoFactorOTPService twoFactorOTPService;
-	
+
 	@Autowired
 	private IEmailService emailService;
 
@@ -59,19 +60,19 @@ public class UserService implements IUserService, UserDetailsService {
 	@Override
 	public AuthResponse register(UserDTO userDTO) throws Exception {
 		UserEntity userEntity = new UserEntity();
-		
+
 		UserEntity isUserExist = userRepository.findByEmail(userDTO.getEmail());
-		if(isUserExist!=null) {
+		if (isUserExist != null) {
 			throw new Exception("Email ALready Registered");
 		}
-		
+
 		userEntity.setFullName(userDTO.getFullName());
 		userEntity.setEmail(userDTO.getEmail());
 		String hashedPassword = passwordEncoder.encode(userDTO.getPassword());
 		userEntity.setPassword(hashedPassword);
 		userEntity.setMobileNo(userDTO.getMobileNo());
 		userEntity = userRepository.save(userEntity);
-		Authentication auth = new UsernamePasswordAuthenticationToken(userDTO.getEmail(),userDTO.getPassword());
+		Authentication auth = new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword());
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		String jwt = JwtProvider.generateToken(auth);
 		AuthResponse response = new AuthResponse();
@@ -84,33 +85,33 @@ public class UserService implements IUserService, UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		UserEntity userEntity = userRepository.findByEmail(email);
-		if(userEntity==null) {
+		if (userEntity == null) {
 			throw new UsernameNotFoundException(email);
 		}
 		List<GrantedAuthority> authorityList = new ArrayList<>();
-		return new User(userEntity.getEmail(),userEntity.getPassword(),authorityList);
+		return new User(userEntity.getEmail(), userEntity.getPassword(), authorityList);
 	}
 
 	@Override
 	public AuthResponse login(UserDTO userDTO) {
-		Authentication auth = authenticate(userDTO.getEmail(),userDTO.getPassword());
+		Authentication auth = authenticate(userDTO.getEmail(), userDTO.getPassword());
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		String jwt = JwtProvider.generateToken(auth);
 		UserEntity userEntity = userRepository.findByEmail(userDTO.getEmail());
 		userDTO.setId(userEntity.getId());
-		if(userDTO.getTwoFactorAuthDTO().isEnabled()) {
+		if (userDTO.getTwoFactorAuthDTO().isEnabled()) {
 			AuthResponse response = new AuthResponse();
 			response.setMessage("Two Factor Auth is Enabled");
 			response.setTwoFactorAuthEnable(true);
 			String otp = OtpUtility.generateOtp();
 			TwoFactorOTPDTO oldTwoFactorOTPDTO = twoFactorOTPService.findByUser(userEntity);
-			if(oldTwoFactorOTPDTO!=null) {
+			if (oldTwoFactorOTPDTO != null) {
 				twoFactorOTPService.deleteTwoFactorOtp(oldTwoFactorOTPDTO);
 			}
 			TwoFactorOTPDTO newTwoFactorOTPDTO = twoFactorOTPService.createTwoFactorOtp(userDTO, otp, jwt);
 			emailService.sendVerificationOtpEmail(userDTO.getEmail(), otp);
 			response.setSession(newTwoFactorOTPDTO.getId());
-			return response; 
+			return response;
 		}
 		AuthResponse response = new AuthResponse();
 		response.setJwt(jwt);
@@ -125,11 +126,11 @@ public class UserService implements IUserService, UserDetailsService {
 	 * @return
 	 */
 	private Authentication authenticate(String email, String password) {
-		UserDetails userDetails  = loadUserByUsername(email);
-		if(userDetails==null) {
+		UserDetails userDetails = loadUserByUsername(email);
+		if (userDetails == null) {
 			throw new BadCredentialsException("Invalid Email");
 		}
-		if(!passwordEncoder.matches(password, userDetails.getPassword())){
+		if (!passwordEncoder.matches(password, userDetails.getPassword())) {
 			throw new BadCredentialsException("Invalid PassWord");
 		}
 		return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
@@ -138,7 +139,7 @@ public class UserService implements IUserService, UserDetailsService {
 	@Override
 	public AuthResponse verifySigningOtp(String otp, String id) throws Exception {
 		TwoFactorOTPDTO twoFactorOTPDTO = twoFactorOTPService.findById(id);
-		if(twoFactorOTPService.verifyTwoFactorOtp(twoFactorOTPDTO, otp)) {
+		if (twoFactorOTPService.verifyTwoFactorOtp(twoFactorOTPDTO, otp)) {
 			AuthResponse response = new AuthResponse();
 			response.setMessage("Two Factor OTP authentication Verified");
 			response.setTwoFactorAuthEnable(true);
@@ -157,31 +158,31 @@ public class UserService implements IUserService, UserDetailsService {
 	@Override
 	public UserDTO findUserByEmail(String email) throws Exception {
 		UserEntity userEntity = userRepository.findByEmail(email);
-		if(userEntity==null) {
+		if (userEntity == null) {
 			throw new Exception("User Not Found");
 		}
-		return covertEntityToDTO(userEntity);
+		return ConverterUtility.convertUserEntityToDTO(userEntity);
 	}
 
 	@Override
 	public UserDTO findUserById(Long userId) throws Exception {
-		Optional<UserEntity> userEntity=userRepository.findById(userId);
-		if(userEntity.isEmpty()) {
+		Optional<UserEntity> userEntity = userRepository.findById(userId);
+		if (userEntity.isEmpty()) {
 			throw new Exception("User Not Found");
 		}
-		return covertEntityToDTO(userEntity.get());
+		return ConverterUtility.convertUserEntityToDTO(userEntity.get());
 	}
 
 	@Override
-	public UserDTO enableTwoFactorAuthentocation(VERIFICATION_TYPE verificationType, String SendTo,UserDTO userDTO) {
+	public UserDTO enableTwoFactorAuthentocation(VERIFICATION_TYPE verificationType, String SendTo, UserDTO userDTO) {
 		UserEntity userEntity = new UserEntity();
-		TwoFactorAuthEntity twoFactorAuthEntity  = new TwoFactorAuthEntity();
+		TwoFactorAuthEntity twoFactorAuthEntity = new TwoFactorAuthEntity();
 		BeanUtils.copyProperties(userDTO, userEntity);
 		twoFactorAuthEntity.setEnabled(true);
 		twoFactorAuthEntity.setSendTO(verificationType);
 		userEntity.setTwoFactorAuthEntity(twoFactorAuthEntity);
 		userEntity = userRepository.save(userEntity);
-		return covertEntityToDTO(userEntity);
+		return ConverterUtility.convertUserEntityToDTO(userEntity);
 	}
 
 	@Override
@@ -190,28 +191,19 @@ public class UserService implements IUserService, UserDetailsService {
 		BeanUtils.copyProperties(userDTO, userEntity);
 		userEntity.setPassword(newPassword);
 		userEntity = userRepository.save(userEntity);
-		return covertEntityToDTO(userEntity);
-	}
-	
-	public UserDTO covertEntityToDTO(UserEntity userEntity){
-		UserDTO userDTO =new UserDTO();
-		if(userEntity!=null) {
-			BeanUtils.copyProperties(userEntity, userDTO);
-			return userDTO;
-		}
-		return null;
-		
+		return ConverterUtility.convertUserEntityToDTO(userEntity);
 	}
 
 	@Override
 	public AuthResponse sendForgotPasswordOtp(ForgotPasswordTokenDTO requestDTO) throws Exception {
 		UserDTO userDTO = findUserByEmail(requestDTO.getSendTo());
 		String otp = OtpUtility.generateOtp();
-		UUID uuid =UUID.randomUUID();
-		String id= uuid.toString();
-		ForgotPasswordTokenDTO forgotPasswordTokenDTO =  forgotPasswordService.findByUser(userDTO.getId());
-		if(forgotPasswordTokenDTO==null) {
-			forgotPasswordTokenDTO = forgotPasswordService.createToken(userDTO, id, otp, requestDTO.getVerificationType(), requestDTO.getSendTo());
+		UUID uuid = UUID.randomUUID();
+		String id = uuid.toString();
+		ForgotPasswordTokenDTO forgotPasswordTokenDTO = forgotPasswordService.findByUser(userDTO.getId());
+		if (forgotPasswordTokenDTO == null) {
+			forgotPasswordTokenDTO = forgotPasswordService.createToken(userDTO, id, otp,
+					requestDTO.getVerificationType(), requestDTO.getSendTo());
 		}
 		if (requestDTO.getVerificationType().equals(VERIFICATION_TYPE.EMAIL)) {
 			emailService.sendVerificationOtpEmail(userDTO.getEmail(), forgotPasswordTokenDTO.getOtp());
@@ -224,10 +216,10 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public AuthResponse verifyForgotPasswordOtp(ForgotPasswordTokenDTO requestDTO, String id) throws Exception {
-		ForgotPasswordTokenDTO forgotPasswordTokenDTO =  forgotPasswordService.findById(id);
+		ForgotPasswordTokenDTO forgotPasswordTokenDTO = forgotPasswordService.findById(id);
 		boolean isVerified = forgotPasswordTokenDTO.getOtp().equals(requestDTO.getOtp());
-		if(isVerified) {
-			updatepassword(forgotPasswordTokenDTO.getUser(), requestDTO.getPassword());
+		if (isVerified) {
+			updatepassword(forgotPasswordTokenDTO.getUserDTO(), requestDTO.getPassword());
 			AuthResponse response = new AuthResponse();
 			response.setMessage("Password Updated SuccessFully");
 			return response;

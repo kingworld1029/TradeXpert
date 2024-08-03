@@ -17,7 +17,7 @@ public class TwoFactorOTPDTO {
 	private String otp;
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private UserDTO user; // Assume UserDTO contains user details that you don't want to expose
+	private UserDTO userDTO; // Assume UserDTO contains user details that you don't want to expose
 
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String jwt;

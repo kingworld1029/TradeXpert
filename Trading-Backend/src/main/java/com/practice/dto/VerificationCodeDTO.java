@@ -17,8 +17,7 @@ public class VerificationCodeDTO {
 
 	private String otp;
 
-	@OneToOne
-	private UserDTO user;
+	private UserDTO userDTO;
 
 	private String email;
 

@@ -5,6 +5,7 @@ package com.practice.service;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.practice.dto.CoinDTO;
 
 /**
@@ -14,15 +15,15 @@ public interface ICoinService {
 
 	List<CoinDTO> getCoinList(int page) throws Exception;
 
-	String getMarketChart(String coinId, int days) throws Exception;
+	JsonNode getMarketChart(String coinId, int days) throws Exception;
 
-	String getCoinDetails(String coinId) throws Exception;
+	JsonNode getCoinDetails(String coinId) throws Exception;
 
-	CoinDTO findById(String coinId);
+	CoinDTO findById(String coinId) throws Exception;
 
-	String searchCoin(String keyword);
+	JsonNode searchCoin(String keyword) throws Exception;
 
-	String getTop50CoinByMarketCap();
+	JsonNode getTop50CoinByMarketCap() throws Exception;
 
-	String getTradingCoins();
+	JsonNode getTradingCoin() throws Exception;
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +32,7 @@ import com.practice.utils.OtpUtility;
  * 
  */
 @RestController
+@RequestMapping("/api/users")
 public class UserController {
 
 	@Autowired
@@ -42,14 +44,14 @@ public class UserController {
 	@Autowired
 	private IEmailService emailService;
 
-	@GetMapping("/api/users/profile")
+	@GetMapping("/profile")
 	public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("Authorization") String jwt) throws Exception {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);
 		return new ResponseEntity<UserDTO>(userDTO, HttpStatus.OK);
 
 	}
 
-	@PostMapping("/api/users/sendVerificationOtp/{verificationType}")
+	@PostMapping("/sendVerificationOtp/{verificationType}")
 	public ResponseEntity<String> sendVerificationOtp(@RequestHeader("Authorization") String jwt,
 			@PathVariable VERIFICATION_TYPE verificationType) throws Exception {
 
@@ -65,7 +67,7 @@ public class UserController {
 
 	}
 
-	@PatchMapping("/api/users/enable-two-factor/{otp}")
+	@PatchMapping("/enable-two-factor/{otp}")
 	public ResponseEntity<UserDTO> enableTwoFactorAuthentication(@PathVariable String otp,
 			@RequestHeader("Authorization") String jwt) throws Exception {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);

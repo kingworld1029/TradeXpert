@@ -26,7 +26,7 @@ public class TwoFactorOTPEntity {
 	
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@OneToOne
-	private UserEntity user;
+	private UserEntity userEntity;
 	
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String jwt;

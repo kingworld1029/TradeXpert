@@ -15,13 +15,14 @@ import com.practice.dto.UserDTO;
 import com.practice.entity.TwoFactorOTPEntity;
 import com.practice.entity.UserEntity;
 import com.practice.repository.TwoFactorOTPRepository;
+import com.practice.utils.ConverterUtility;
 
 /**
  * 
  */
 @Service
 public class TwoFactorOTPService implements ITwoFactorOTPService {
-	
+
 	@Autowired
 	private TwoFactorOTPRepository twoFactorOTPRepository;
 
@@ -31,27 +32,27 @@ public class TwoFactorOTPService implements ITwoFactorOTPService {
 		String id = uuid.toString();
 		UserEntity userEntity = new UserEntity();
 		BeanUtils.copyProperties(user, userEntity);
-		TwoFactorOTPEntity twoFactorOTPEntity  = new TwoFactorOTPEntity();
+		TwoFactorOTPEntity twoFactorOTPEntity = new TwoFactorOTPEntity();
 		twoFactorOTPEntity.setOtp(otp);
 		twoFactorOTPEntity.setJwt(jwt);
-		twoFactorOTPEntity.setUser(userEntity);
+		twoFactorOTPEntity.setUserEntity(userEntity);
 		twoFactorOTPEntity.setId(id);
 		twoFactorOTPEntity = twoFactorOTPRepository.save(twoFactorOTPEntity);
-		return covertEntityToDTO(twoFactorOTPEntity);
+		return ConverterUtility.convertOTPEntityToDTO(twoFactorOTPEntity);
 	}
 
 	@Override
 	public TwoFactorOTPDTO findByUser(UserEntity userEntity) {
-		TwoFactorOTPEntity twoFactorOTPEntity=twoFactorOTPRepository.findByUser(userEntity);
-		
-		return covertEntityToDTO(twoFactorOTPEntity);
+		TwoFactorOTPEntity twoFactorOTPEntity = twoFactorOTPRepository.findByUser(userEntity);
+
+		return ConverterUtility.convertOTPEntityToDTO(twoFactorOTPEntity);
 	}
 
 	@Override
 	public TwoFactorOTPDTO findById(String id) {
-		Optional<TwoFactorOTPEntity> twoFactorOTPEntity  = twoFactorOTPRepository.findById(id);
-		if(twoFactorOTPEntity.isPresent()) {
-			return covertEntityToDTO(twoFactorOTPEntity.get());
+		Optional<TwoFactorOTPEntity> twoFactorOTPEntity = twoFactorOTPRepository.findById(id);
+		if (twoFactorOTPEntity.isPresent()) {
+			return ConverterUtility.convertOTPEntityToDTO(twoFactorOTPEntity.get());
 		}
 		return null;
 	}
@@ -64,18 +65,7 @@ public class TwoFactorOTPService implements ITwoFactorOTPService {
 	@Override
 	public void deleteTwoFactorOtp(TwoFactorOTPDTO twoFactorOTPDTO) {
 		twoFactorOTPRepository.deleteById(twoFactorOTPDTO.getId());
-		
-	}
-	
-	public TwoFactorOTPDTO covertEntityToDTO(TwoFactorOTPEntity twoFactorOTPEntity){
-		TwoFactorOTPDTO twoFactorOTPDTO =new TwoFactorOTPDTO();
-		if(twoFactorOTPEntity!=null) {
-			BeanUtils.copyProperties(twoFactorOTPEntity, twoFactorOTPDTO);
-			return twoFactorOTPDTO;
-		}
-		return null;
-		
+
 	}
 
-	
 }

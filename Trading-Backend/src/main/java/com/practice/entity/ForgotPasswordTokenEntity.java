@@ -26,7 +26,7 @@ public class ForgotPasswordTokenEntity {
 	private String id;
 	
 	@OneToOne
-	private UserEntity user;
+	private UserEntity userEntity;
 	
 	private String otp;
 	

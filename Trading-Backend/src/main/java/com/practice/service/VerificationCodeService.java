@@ -15,6 +15,7 @@ import com.practice.entity.UserEntity;
 import com.practice.entity.VerificationCodeEntity;
 import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 import com.practice.repository.VerificationCodeRepository;
+import com.practice.utils.ConverterUtility;
 import com.practice.utils.OtpUtility;
 
 /**
@@ -22,27 +23,27 @@ import com.practice.utils.OtpUtility;
  */
 @Service
 public class VerificationCodeService implements IVerificationCodeService {
-	
+
 	@Autowired
 	private VerificationCodeRepository verificationCodeRepository;
 
 	@Override
-	public VerificationCodeDTO sendveificationCode(UserDTO userDTO,VERIFICATION_TYPE verificationType) {
+	public VerificationCodeDTO sendveificationCode(UserDTO userDTO, VERIFICATION_TYPE verificationType) {
 		VerificationCodeEntity verificationCodeEntity = new VerificationCodeEntity();
 		UserEntity userEntity = new UserEntity();
 		BeanUtils.copyProperties(userDTO, userEntity);
 		verificationCodeEntity.setOtp(OtpUtility.generateOtp());
 		verificationCodeEntity.setVerificationType(verificationType);
-		verificationCodeEntity.setUser(userEntity);
+		verificationCodeEntity.setUserEntity(userEntity);
 		verificationCodeEntity = verificationCodeRepository.save(verificationCodeEntity);
-		return covertEntityToDTO(verificationCodeEntity);
+		return ConverterUtility.convertCodeEntityToDTO(verificationCodeEntity);
 	}
 
 	@Override
 	public VerificationCodeDTO getVerificationCodeById(Long id) throws Exception {
 		Optional<VerificationCodeEntity> verificationCodeEntity = verificationCodeRepository.findById(id);
-		if(verificationCodeEntity.isPresent()) {
-			return covertEntityToDTO(verificationCodeEntity.get());
+		if (verificationCodeEntity.isPresent()) {
+			return ConverterUtility.convertCodeEntityToDTO(verificationCodeEntity.get());
 		}
 		throw new Exception("Verification code Not Found");
 	}
@@ -50,7 +51,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 	@Override
 	public VerificationCodeDTO getVerificationCodeByUser(Long userId) {
 		VerificationCodeEntity verificationCodeEntity = verificationCodeRepository.findByUserId(userId);
-		return covertEntityToDTO(verificationCodeEntity);
+		return ConverterUtility.convertCodeEntityToDTO(verificationCodeEntity);
 	}
 
 	@Override
@@ -58,17 +59,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 		VerificationCodeEntity verificationCodeEntity = new VerificationCodeEntity();
 		BeanUtils.copyProperties(verificationCodeDTO, verificationCodeEntity);
 		verificationCodeRepository.delete(verificationCodeEntity);
-		
-	}
-	
-	public VerificationCodeDTO covertEntityToDTO(VerificationCodeEntity verificationCodeEntity){
-		VerificationCodeDTO verificationCodeDTO =new VerificationCodeDTO();
-		if(verificationCodeEntity!=null) {
-			BeanUtils.copyProperties(verificationCodeEntity, verificationCodeDTO);
-			return verificationCodeDTO;
-		}
-		return null;
-		
+
 	}
 
 }

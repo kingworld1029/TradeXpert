@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.practice.dto.ForgotPasswordTokenDTO;
 import com.practice.dto.UserDTO;
 import com.practice.entity.ForgotPasswordTokenEntity;
+import com.practice.entity.UserEntity;
 import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 import com.practice.repository.ForgotPasswordTokenRepository;
 
@@ -27,8 +28,10 @@ public class ForgotPasswordService implements IForgotPasswordService {
 	@Override
 	public ForgotPasswordTokenDTO createToken(UserDTO userDTO, String id, String otp,
 			VERIFICATION_TYPE verificationType, String sendTo) {
+		UserEntity userEntity = new UserEntity();
 		ForgotPasswordTokenEntity forgotPasswordTokenEntity = new ForgotPasswordTokenEntity();
-		forgotPasswordTokenEntity.setUser(null);
+		BeanUtils.copyProperties(userDTO, userEntity);
+		forgotPasswordTokenEntity.setUserEntity(userEntity);
 		forgotPasswordTokenEntity.setSendTo(sendTo);
 		forgotPasswordTokenEntity.setVerificationType(verificationType);
 		forgotPasswordTokenEntity.setOtp(otp);
@@ -63,10 +66,10 @@ public class ForgotPasswordService implements IForgotPasswordService {
 		ForgotPasswordTokenDTO forgotPasswordTokenDTO = new ForgotPasswordTokenDTO();
 		if (forgotPasswordTokenEntity != null) {
 			BeanUtils.copyProperties(forgotPasswordTokenEntity, forgotPasswordTokenDTO);
-			if (forgotPasswordTokenEntity.getUser() != null) {
+			if (forgotPasswordTokenEntity.getUserEntity() != null) {
 				UserDTO userDTO = new UserDTO();
-				BeanUtils.copyProperties(forgotPasswordTokenEntity.getUser(), userDTO);
-				forgotPasswordTokenDTO.setUser(userDTO);
+				BeanUtils.copyProperties(forgotPasswordTokenEntity.getUserEntity(), userDTO);
+				forgotPasswordTokenDTO.setUserDTO(userDTO);
 			}
 			return forgotPasswordTokenDTO;
 		}

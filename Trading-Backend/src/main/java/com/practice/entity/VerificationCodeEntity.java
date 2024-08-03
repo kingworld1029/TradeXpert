@@ -18,22 +18,22 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name = "TB_VERIFICATIONCODE")
+@Table(name = "TB_VERIFICATION_CODE")
 public class VerificationCodeEntity {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	private String otp;
-	
+
 	@OneToOne
-	private UserEntity user;
-	
+	private UserEntity userEntity;
+
 	private String email;
-	
+
 	private String mobile;
-	
+
 	private VERIFICATION_TYPE verificationType;
 
 }

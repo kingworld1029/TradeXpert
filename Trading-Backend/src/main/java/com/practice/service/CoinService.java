@@ -4,7 +4,9 @@
 package com.practice.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -51,28 +53,17 @@ public class CoinService implements ICoinService {
 	}
 
 	@Override
-	public String getMarketChart(String coinId, int days) throws Exception {
+	public JsonNode getMarketChart(String coinId, int days) throws Exception {
 		String url = "https://api.coingecko.com/api/v3/coins/" + coinId + "/market_chart?vs_currency=usd&days=" + days;
-		RestTemplate restTemplate = new RestTemplate();
-		try {
-			HttpHeaders headers = new HttpHeaders();
-			HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-			return response.getBody();
-		} catch (HttpClientErrorException | HttpServerErrorException e) {
-			throw new Exception(e.getMessage());
-		}
+		return getData(url);
 	}
 
 	@Override
-	public String getCoinDetails(String coinId) throws Exception {
+	public JsonNode getCoinDetails(String coinId) throws Exception {
 		String url = "https://api.coingecko.com/api/v3/coins/" + coinId;
 		RestTemplate restTemplate = new RestTemplate();
 		try {
-			HttpHeaders headers = new HttpHeaders();
-			HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-			JsonNode jsonNode = objectMapper.readTree(response.getBody());
+			JsonNode jsonNode = getData(url);
 			CoinEntity coinEntity = new CoinEntity();
 			coinEntity.setId(jsonNode.get("id").asText());
 			coinEntity.setName(jsonNode.get("name").asText());
@@ -91,34 +82,54 @@ public class CoinService implements ICoinService {
 			coinEntity.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asLong());
 			coinEntity.setTotalSupply(marketData.get("total_supply").get("usd").asLong());
 			coinRespository.save(coinEntity);
-			return response.getBody();
+			return jsonNode;
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			throw new Exception(e.getMessage());
 		}
 	}
 
 	@Override
-	public CoinDTO findById(String coinId) {
-		// TODO Auto-generated method stub
-		return null;
+	public CoinDTO findById(String coinId) throws Exception {
+		CoinDTO coinDTO = new CoinDTO();
+		Optional<CoinEntity> coinEntity = coinRespository.findById(coinId);
+		if (coinEntity.isEmpty()) {
+			throw new Exception("Coin not Found");
+		}
+		BeanUtils.copyProperties(coinEntity.get(), coinDTO);
+		return coinDTO;
 	}
 
 	@Override
-	public String searchCoin(String keyword) {
-		// TODO Auto-generated method stub
-		return null;
+	public JsonNode searchCoin(String keyword) throws Exception {
+		String url = "https://api.coingecko.com/api/v3/search?query=" + keyword;
+		return getData(url);
 	}
 
 	@Override
-	public String getTop50CoinByMarketCap() {
-		// TODO Auto-generated method stub
-		return null;
+	public JsonNode getTop50CoinByMarketCap() throws Exception {
+		String url = "https://api.coingecko.com/api/v3/coins/markets/vs_currency=usd&per_page=50&page=1";
+		return getData(url);
 	}
 
 	@Override
-	public String getTradingCoins() {
-		// TODO Auto-generated method stub
-		return null;
+	public JsonNode getTradingCoin() throws Exception {
+		String url = "https://api.coingecko.com/api/v3/search/treading";
+		return getData(url);
+
+	}
+
+	JsonNode getData(String url) throws Exception {
+		RestTemplate restTemplate = new RestTemplate();
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+			JsonNode jsonNode = objectMapper.readTree(response.getBody());
+			return jsonNode;
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			throw new Exception(e.getMessage());
+		}
+
 	}
 
 }
