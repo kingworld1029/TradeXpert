@@ -57,20 +57,22 @@ public class AssetService implements IAssetService {
 	}
 
 	@Override
-	public AssetDTO updateAssest(Long assetId, double quantity) {
-		// TODO Auto-generated method stub
-		return null;
+	public AssetDTO updateAssest(Long assetId, double quantity) throws Exception {
+		AssetDTO assetDTO = getAssetById(assetId);
+		assetDTO.setQuantity(quantity + assetDTO.getQuantity());
+		assetRepository.save(ConverterUtility.convertAssetDTOToEntity(assetDTO));
+		return assetDTO;
 	}
 
 	@Override
 	public AssetDTO findAssetByUserIdAndCoinId(Long userId, String coinId) {
-		// TODO Auto-generated method stub
-		return null;
+		AssetEntity assetEntity = assetRepository.findAssetByUserIdAndCoinId(userId, coinId);
+		return ConverterUtility.convertAssetEntityToDTO(assetEntity);
 	}
 
 	@Override
 	public void deleteAsset(Long assetId) {
-		// TODO Auto-generated method stub
+		assetRepository.deleteById(assetId);
 
 	}
 

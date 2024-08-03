@@ -29,4 +29,8 @@ public class HelperEnum {
 	public enum WALLET_TRANS_TYPE {
 		WITHDRAWAL, WALLET_TRANSFER, ADD_MONEY, BUY_ASSET, SELL_ASSET
 	}
+
+	public enum WITHDRAWAL_STATUS {
+		PENDING, SUCCESS, DECLINED
+	}
 }

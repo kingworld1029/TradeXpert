@@ -13,6 +13,7 @@ import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.VerificationCodeDTO;
 import com.practice.dto.WalletDTO;
+import com.practice.dto.WithdrawalDTO;
 import com.practice.entity.AssetEntity;
 import com.practice.entity.CoinEntity;
 import com.practice.entity.OrderEntity;
@@ -21,6 +22,7 @@ import com.practice.entity.TwoFactorOTPEntity;
 import com.practice.entity.UserEntity;
 import com.practice.entity.VerificationCodeEntity;
 import com.practice.entity.WalletEntity;
+import com.practice.entity.WithdrawalEntity;
 
 /**
  * 
@@ -230,6 +232,32 @@ public class ConverterUtility {
 				assetEntity.setCoinEntity(convertCoinDTOToEntity(assetDTO.getCoinDTO()));
 			}
 			return assetEntity;
+		}
+		return null;
+
+	}
+
+	public static WithdrawalDTO convertWithdrawalEntityToDTO(WithdrawalEntity withdrawalEntity) {
+		WithdrawalDTO withdrawalDTO = new WithdrawalDTO();
+		if (withdrawalEntity != null) {
+			BeanUtils.copyProperties(withdrawalEntity, withdrawalDTO);
+			if (withdrawalEntity.getUserEntity() != null) {
+				withdrawalDTO.setUserDTO(convertUserEntityToDTO(withdrawalEntity.getUserEntity()));
+			}
+			return withdrawalDTO;
+		}
+		return null;
+
+	}
+
+	public static WithdrawalEntity convertWithdrawalDTOToEntity(WithdrawalDTO withdrawalDTO) {
+		WithdrawalEntity withdrawalEntity = new WithdrawalEntity();
+		if (withdrawalDTO != null) {
+			BeanUtils.copyProperties(withdrawalDTO, withdrawalEntity);
+			if (withdrawalDTO.getUserDTO() != null) {
+				withdrawalEntity.setUserEntity(convertUserDTOToEntity(withdrawalDTO.getUserDTO()));
+			}
+			return withdrawalEntity;
 		}
 		return null;
 

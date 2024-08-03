@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.practice.dto.AssetDTO;
 import com.practice.dto.CoinDTO;
 import com.practice.dto.OrderDTO;
 import com.practice.dto.OrderItemDTO;
@@ -41,6 +42,9 @@ public class OrderService implements IOrderService {
 
 	@Autowired
 	private OrderItemRespository orderItemRespository;
+
+	@Autowired
+	private IAssetService assetService;
 
 	@Override
 	public OrderDTO createOrder(UserDTO userDTO, OrderItemDTO orderItemDTO, ORDER_TYPE orderType) {
@@ -94,6 +98,15 @@ public class OrderService implements IOrderService {
 		orderDTO.setOrderType(ORDER_TYPE.BUY);
 		orderRepository.save(ConverterUtility.convertOrderDTOToEntity(orderDTO));
 		walletService.payOrderpayment(orderDTO, userDTO);
+
+		AssetDTO assetDTO = assetService.findAssetByUserIdAndCoinId(orderDTO.getUserDTO().getId(),
+				orderDTO.getOrderItemDTO().getCoinDTO().getId());
+
+		if (assetDTO == null) {
+			assetService.createAsset(userDTO, ordeItemDTO.getCoinDTO(), ordeItemDTO.getQuantity());
+		} else {
+			assetService.updateAssest(assetDTO.getId(), quantity);
+		}
 		return orderDTO;
 
 	}
@@ -104,22 +117,28 @@ public class OrderService implements IOrderService {
 			throw new Exception("Quantity Should Be Greater Than Zero");
 		}
 		double sellPrice = coinDTO.getCurrentPrice();
-		double buyPrice = assestToSell.getPrice();
-		OrderItemDTO ordeItemDTO = createOrderItem(coinDTO, quantity, buyPrice, sellPrice);
-		OrderDTO orderDTO = createOrder(userDTO, ordeItemDTO, ORDER_TYPE.SELL);
-		ordeItemDTO.setOrderDTO(orderDTO);
-		if (assestToSell.getQuantity >= quantity) {
-			orderDTO.setOrderStatus(ORDER_STATUS.SUCCESS);
-			orderDTO.setOrderType(ORDER_TYPE.SELL);
-			orderRepository.save(ConverterUtility.convertOrderDTOToEntity(orderDTO));
-			walletService.payOrderpayment(orderDTO, userDTO);
-			AssetEntity updateAsset = assestService.updateAsset(assestToSell.getId, -quantity);
-			if (updateAsset.getQuantity() * coinDTO.getCurrentPrice() <= 1) {
-				assestService.deleteAsset(updateAsset);
+		AssetDTO assestToSell = assetService.findAssetByUserIdAndCoinId(userDTO.getId(), coinDTO.getId());
+		if (assestToSell != null) {
+
+			double buyPrice = assestToSell.getBuyPrice();
+			OrderItemDTO ordeItemDTO = createOrderItem(coinDTO, quantity, buyPrice, sellPrice);
+			OrderDTO orderDTO = createOrder(userDTO, ordeItemDTO, ORDER_TYPE.SELL);
+			ordeItemDTO.setOrderDTO(orderDTO);
+			if (assestToSell.getQuantity() >= quantity) {
+				orderDTO.setOrderStatus(ORDER_STATUS.SUCCESS);
+				orderDTO.setOrderType(ORDER_TYPE.SELL);
+				orderRepository.save(ConverterUtility.convertOrderDTOToEntity(orderDTO));
+				walletService.payOrderpayment(orderDTO, userDTO);
+
+				AssetDTO updatedAsset = assetService.updateAssest(assestToSell.getId(), -quantity);
+				if (updatedAsset.getQuantity() * coinDTO.getCurrentPrice() <= 1) {
+					assetService.deleteAsset(updatedAsset.getId());
+				}
+				return orderDTO;
 			}
-			return orderDTO;
+			throw new Exception("Insufficient Qunatity To Sell");
 		}
-		throw new Exception("Insufficient Qunatity To Sell");
+		throw new Exception("Asset Not Found");
 
 	}
 

@@ -22,7 +22,7 @@ public interface IAssetService {
 
 	List<AssetDTO> getUserAssets(Long userId);
 
-	AssetDTO updateAssest(Long assetId, double quantity);
+	AssetDTO updateAssest(Long assetId, double quantity) throws Exception;
 
 	AssetDTO findAssetByUserIdAndCoinId(Long userId, String coinId);
 
