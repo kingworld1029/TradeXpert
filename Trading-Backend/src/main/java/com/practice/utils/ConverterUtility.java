@@ -3,6 +3,10 @@
  */
 package com.practice.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.BeanUtils;
 
 import com.practice.dto.AssetDTO;
@@ -13,6 +17,7 @@ import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.VerificationCodeDTO;
 import com.practice.dto.WalletDTO;
+import com.practice.dto.WatchListDTO;
 import com.practice.dto.WithdrawalDTO;
 import com.practice.entity.AssetEntity;
 import com.practice.entity.CoinEntity;
@@ -22,6 +27,7 @@ import com.practice.entity.TwoFactorOTPEntity;
 import com.practice.entity.UserEntity;
 import com.practice.entity.VerificationCodeEntity;
 import com.practice.entity.WalletEntity;
+import com.practice.entity.WatchListEntity;
 import com.practice.entity.WithdrawalEntity;
 
 /**
@@ -258,6 +264,49 @@ public class ConverterUtility {
 				withdrawalEntity.setUserEntity(convertUserDTOToEntity(withdrawalDTO.getUserDTO()));
 			}
 			return withdrawalEntity;
+		}
+		return null;
+
+	}
+
+	public static WatchListDTO convertWatchListEntityToDTO(WatchListEntity watchListEntity) {
+		WatchListDTO watchListDTO = new WatchListDTO();
+		if (watchListEntity != null) {
+			watchListDTO.setId(watchListEntity.getId());
+			if (watchListEntity.getUserEntity() != null) {
+				watchListDTO.setUserDTO(convertUserEntityToDTO(watchListEntity.getUserEntity()));
+			}
+			if (!watchListEntity.getCoinEntities().isEmpty()) {
+				List<CoinDTO> coinDTOList = watchListEntity.getCoinEntities().stream().map(coinEntity -> {
+					CoinDTO coinDTO = new CoinDTO();
+					BeanUtils.copyProperties(coinEntity, coinDTO);
+					return coinDTO;
+				}).collect(Collectors.toList());
+				watchListDTO.setCoinDTOs(coinDTOList);
+			}
+			return watchListDTO;
+		}
+		return null;
+
+	}
+
+	public static WatchListEntity convertWatchListDTOToEntity(WatchListDTO watchListDTO) {
+		WatchListEntity watchListEntity = new WatchListEntity();
+		if (watchListDTO != null) {
+			watchListEntity.setId(watchListDTO.getId());
+			if (watchListDTO.getUserDTO() != null) {
+				watchListEntity.setUserEntity(convertUserDTOToEntity(watchListDTO.getUserDTO()));
+			}
+			if (!watchListDTO.getCoinDTOs().isEmpty()) {
+				List<CoinEntity> coinEntityList = watchListDTO.getCoinDTOs().stream().map(coinDto -> {
+					CoinEntity coinEntity = new CoinEntity();
+					BeanUtils.copyProperties(coinDto, coinEntity);
+					return coinEntity;
+				}).collect(Collectors.toList());
+				watchListEntity.setCoinEntities(coinEntityList);
+			}
+
+			return watchListEntity;
 		}
 		return null;
 
