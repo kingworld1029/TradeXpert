@@ -48,19 +48,18 @@ public class OrderService implements IOrderService {
 
 	@Autowired
 	private IUserService userService;
-	
+
 	@Override
-	public OrderDTO createOrder(UserDTO userDTO, OrderItemDTO orderItemDTO, ORDER_TYPE orderType) {
-		double price = orderItemDTO.getCoinDTO().getCurrentPrice() * orderItemDTO.getQuantity();
+	public OrderEntity createOrder(UserEntity userEntity, OrderItemEntity orderItemEntity, ORDER_TYPE orderType) {
+		double price = orderItemEntity.getCoinEntity().getCurrentPrice() * orderItemEntity.getQuantity();
 		OrderEntity orderEntity = new OrderEntity();
-		orderEntity.setUserEntity(ConverterUtility.convertUserDTOToEntity(userDTO));
-		orderEntity.setOrderItemEntity(ConverterUtility.convertOrderItemDTOToEntity(orderItemDTO));
+		orderEntity.setUserEntity(userEntity);
+		orderEntity.setOrderItemEntity(orderItemEntity);
 		orderEntity.setOrderType(orderType);
 		orderEntity.setPrice(BigDecimal.valueOf(price));
 		orderEntity.setTimestamp(LocalDateTime.now());
 		orderEntity.setOrderStatus(ORDER_STATUS.PENDING);
-		orderRepository.save(orderEntity);
-		return ConverterUtility.convertOrderEntityToDTO(orderEntity);
+		return orderRepository.save(orderEntity);
 	}
 
 	@Override
@@ -78,36 +77,37 @@ public class OrderService implements IOrderService {
 		return orderDTOList;
 	}
 
-	private OrderItemDTO createOrderItem(CoinDTO coinDTO, double quantity, double buyPrice, double sellPrice) {
+	private OrderItemEntity createOrderItem(CoinEntity coinEntity, double quantity, double buyPrice, double sellPrice) {
 		OrderItemEntity orderItemEntity = new OrderItemEntity();
-		orderItemEntity.setCoinEntity(ConverterUtility.convertCoinDTOToEntity(coinDTO));
+		orderItemEntity.setCoinEntity(coinEntity);
 		orderItemEntity.setQuantity(quantity);
 		orderItemEntity.setBuyPrice(buyPrice);
 		orderItemEntity.setSellPrice(sellPrice);
-		orderItemRespository.save(orderItemEntity);
-		return ConverterUtility.convertOrderItemEntityToDTO(orderItemEntity);
+		return orderItemRespository.save(orderItemEntity);
 
 	}
 
 	@Transactional
-	public OrderDTO buyAsset(CoinDTO coinDTO, double quantity, UserDTO userDTO) throws Exception {
+	public OrderDTO buyAsset(CoinEntity coinEntity, double quantity, UserEntity userEntity) throws Exception {
 		if (quantity <= 0) {
 			throw new Exception("Quantity Should Be Greater Than Zero");
 		}
-		double buyPrice = coinDTO.getCurrentPrice();
-		OrderItemDTO ordeItemDTO = createOrderItem(coinDTO, quantity, buyPrice, 0);
-		OrderDTO orderDTO = createOrder(userDTO, ordeItemDTO, ORDER_TYPE.BUY);
-		ordeItemDTO.setOrderDTO(orderDTO);
-		orderDTO.setOrderStatus(ORDER_STATUS.SUCCESS);
-		orderDTO.setOrderType(ORDER_TYPE.BUY);
-		orderRepository.save(ConverterUtility.convertOrderDTOToEntity(orderDTO));
+		double buyPrice = coinEntity.getCurrentPrice();
+		OrderItemEntity orderItemEntity = createOrderItem(coinEntity, quantity, buyPrice, 0);
+		OrderEntity orderEntity = createOrder(userEntity, orderItemEntity, ORDER_TYPE.BUY);
+		orderItemEntity.setOrderEntity(orderEntity);
+		orderEntity.setOrderStatus(ORDER_STATUS.SUCCESS);
+		orderEntity.setOrderType(ORDER_TYPE.BUY);
+		orderEntity = orderRepository.save(orderEntity);
+		OrderDTO orderDTO = ConverterUtility.convertOrderEntityToDTO(orderEntity);
+		UserDTO userDTO = ConverterUtility.convertUserEntityToDTO(userEntity);
 		walletService.payOrderpayment(orderDTO, userDTO);
 
 		AssetDTO assetDTO = assetService.findAssetByUserIdAndCoinId(orderDTO.getUserDTO().getId(),
 				orderDTO.getOrderItemDTO().getCoinDTO().getId());
 
 		if (assetDTO == null) {
-			assetService.createAsset(userDTO, ordeItemDTO.getCoinDTO(), ordeItemDTO.getQuantity());
+			assetService.createAsset(userEntity, orderItemEntity.getCoinEntity(), orderItemEntity.getQuantity());
 		} else {
 			assetService.updateAssest(assetDTO.getId(), quantity);
 		}
@@ -116,26 +116,28 @@ public class OrderService implements IOrderService {
 	}
 
 	@Transactional
-	public OrderDTO sellAsset(CoinDTO coinDTO, double quantity, UserDTO userDTO) throws Exception {
+	public OrderDTO sellAsset(CoinEntity coinEntity, double quantity, UserEntity userEntity) throws Exception {
 		if (quantity <= 0) {
 			throw new Exception("Quantity Should Be Greater Than Zero");
 		}
-		double sellPrice = coinDTO.getCurrentPrice();
-		AssetDTO assestToSell = assetService.findAssetByUserIdAndCoinId(userDTO.getId(), coinDTO.getId());
+		double sellPrice = coinEntity.getCurrentPrice();
+		AssetDTO assestToSell = assetService.findAssetByUserIdAndCoinId(userEntity.getId(), coinEntity.getId());
 		if (assestToSell != null) {
 
 			double buyPrice = assestToSell.getBuyPrice();
-			OrderItemDTO ordeItemDTO = createOrderItem(coinDTO, quantity, buyPrice, sellPrice);
-			OrderDTO orderDTO = createOrder(userDTO, ordeItemDTO, ORDER_TYPE.SELL);
-			ordeItemDTO.setOrderDTO(orderDTO);
+			OrderItemEntity orderItemEntity = createOrderItem(coinEntity, quantity, buyPrice, sellPrice);
+			OrderEntity orderEntity = createOrder(userEntity, orderItemEntity, ORDER_TYPE.SELL);
+			orderItemEntity.setOrderEntity(orderEntity);
 			if (assestToSell.getQuantity() >= quantity) {
-				orderDTO.setOrderStatus(ORDER_STATUS.SUCCESS);
-				orderDTO.setOrderType(ORDER_TYPE.SELL);
-				orderRepository.save(ConverterUtility.convertOrderDTOToEntity(orderDTO));
+				orderEntity.setOrderStatus(ORDER_STATUS.SUCCESS);
+				orderEntity.setOrderType(ORDER_TYPE.SELL);
+				orderEntity = orderRepository.save(orderEntity);
+				OrderDTO orderDTO = ConverterUtility.convertOrderEntityToDTO(orderEntity);
+				UserDTO userDTO = ConverterUtility.convertUserEntityToDTO(userEntity);
 				walletService.payOrderpayment(orderDTO, userDTO);
 
 				AssetDTO updatedAsset = assetService.updateAssest(assestToSell.getId(), -quantity);
-				if (updatedAsset.getQuantity() * coinDTO.getCurrentPrice() <= 1) {
+				if (updatedAsset.getQuantity() * coinEntity.getCurrentPrice() <= 1) {
 					assetService.deleteAsset(updatedAsset.getId());
 				}
 				return orderDTO;
@@ -150,10 +152,12 @@ public class OrderService implements IOrderService {
 	@Override
 	public OrderDTO processOrder(CoinDTO coinDTO, double quantity, ORDER_TYPE orderType, UserDTO userDTO)
 			throws Exception {
+		CoinEntity coinEntity = ConverterUtility.convertCoinDTOToEntity(coinDTO);
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userDTO);
 		if (orderType.equals(ORDER_TYPE.BUY)) {
-			return buyAsset(coinDTO, quantity, userDTO);
+			return buyAsset(coinEntity, quantity, userEntity);
 		} else if (orderType.equals(ORDER_TYPE.SELL)) {
-			return sellAsset(coinDTO, quantity, userDTO);
+			return sellAsset(coinEntity, quantity, userEntity);
 		}
 		throw new Exception("Invalid Order Type");
 	}

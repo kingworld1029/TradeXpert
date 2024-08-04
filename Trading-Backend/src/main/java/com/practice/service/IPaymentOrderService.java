@@ -22,7 +22,7 @@ public interface IPaymentOrderService {
 
 	Boolean proceedPaymentOrder(PaymentOrderDTO paymentOrderDTO, String paymentId) throws RazorpayException;
 
-	String createRazorPaymentLink(UserDTO userDTO, Long amount) throws RazorpayException;
+	String createRazorPaymentLink(UserDTO userDTO, Long amount,Long orderId) throws RazorpayException;
 
 	String createStripePaymentLink(UserDTO userDTO, Long amount, Long orderId) throws StripeException;
 }

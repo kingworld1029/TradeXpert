@@ -19,6 +19,8 @@ import lombok.Data;
 @Data
 public class OrderDTO {
 
+	private Long Id;
+
 	private UserDTO userDTO;
 
 	private ORDER_TYPE orderType;

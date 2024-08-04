@@ -6,6 +6,7 @@ package com.practice.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -38,7 +39,7 @@ public class WatchListController {
 	@GetMapping("/user")
 	public ResponseEntity<WatchListDTO> getUserWacthList(@RequestHeader("Authorization") String jwt) throws Exception {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);
-		WatchListDTO watchListDTO = watchListService.findUserWatchList(userDTO.getId());
+		WatchListDTO watchListDTO = watchListService.findUserWatchList(userDTO);
 		return ResponseEntity.ok(watchListDTO);
 
 	}
@@ -50,7 +51,7 @@ public class WatchListController {
 
 	}
 
-	@GetMapping("/addItem/{coinId}")
+	@PatchMapping("/addItem/{coinId}")
 	public ResponseEntity<CoinDTO> addItemToWatchList(@RequestHeader("Authorization") String jwt,
 			@PathVariable String coinId) throws Exception {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);

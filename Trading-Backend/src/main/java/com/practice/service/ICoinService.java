@@ -25,5 +25,5 @@ public interface ICoinService {
 
 	JsonNode getTop50CoinByMarketCap() throws Exception;
 
-	JsonNode getTradingCoin() throws Exception;
+	JsonNode getTrendingCoin() throws Exception;
 }

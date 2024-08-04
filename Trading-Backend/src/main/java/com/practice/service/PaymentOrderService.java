@@ -50,6 +50,7 @@ public class PaymentOrderService implements IPaymentOrderService {
 		paymentOrderEntity.setUserEntity(ConverterUtility.convertUserDTOToEntity(userDTO));
 		paymentOrderEntity.setAmount(amount);
 		paymentOrderEntity.setPaymentMethod(paymentMehtod);
+		paymentOrderEntity.setPaymentStatus(PAYMENT_ORDER_STATUS.PENDING);
 		paymentOrderEntity = paymentOrderRepository.save(paymentOrderEntity);
 		return ConverterUtility.convertPaymentOrderEntityToDTO(paymentOrderEntity);
 	}
@@ -85,7 +86,7 @@ public class PaymentOrderService implements IPaymentOrderService {
 	}
 
 	@Override
-	public String createRazorPaymentLink(UserDTO userDTO, Long amount) throws RazorpayException {
+	public String createRazorPaymentLink(UserDTO userDTO, Long amount,Long orderId) throws RazorpayException {
 		amount = amount * 100;
 		try {
 			RazorpayClient razorpayClient = new RazorpayClient(razorpayApiKey, razorpaySecretKey);
@@ -104,7 +105,7 @@ public class PaymentOrderService implements IPaymentOrderService {
 
 			paymentLinkRequest.put("reminder_enable", true);
 
-			paymentLinkRequest.put("callback_url", "http://localhost:5173/wallet");
+			paymentLinkRequest.put("callback_url", "http://localhost:5173/wallet?order_id=" + orderId);
 			paymentLinkRequest.put("callback_method", "get");
 
 			PaymentLink paymentLink = razorpayClient.paymentLink.create(paymentLinkRequest);

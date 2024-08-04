@@ -9,6 +9,9 @@ import com.practice.dto.CoinDTO;
 import com.practice.dto.OrderDTO;
 import com.practice.dto.OrderItemDTO;
 import com.practice.dto.UserDTO;
+import com.practice.entity.OrderEntity;
+import com.practice.entity.OrderItemEntity;
+import com.practice.entity.UserEntity;
 import com.practice.helper.HelperEnum.ORDER_TYPE;
 
 /**
@@ -16,7 +19,7 @@ import com.practice.helper.HelperEnum.ORDER_TYPE;
  */
 public interface IOrderService {
 
-	OrderDTO createOrder(UserDTO userDTO, OrderItemDTO orderItemDTO, ORDER_TYPE orderType);
+	OrderEntity createOrder(UserEntity userEntity, OrderItemEntity orderItemEntity, ORDER_TYPE orderType);
 
 	OrderDTO getOrderById(Long orderId) throws Exception;
 

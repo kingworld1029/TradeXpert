@@ -12,7 +12,7 @@ import com.practice.dto.WatchListDTO;
  */
 public interface IWatchListService {
 
-	WatchListDTO findUserWatchList(Long userId) throws Exception;
+	WatchListDTO findUserWatchList(UserDTO userDTO) throws Exception;
 
 	WatchListDTO createWatchlist(UserDTO userDTO);
 

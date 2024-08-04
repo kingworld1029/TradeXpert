@@ -3,7 +3,6 @@
  */
 package com.practice.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.practice.helper.HelperEnum.WALLET_TRANS_TYPE;
@@ -27,5 +26,5 @@ public class WalletTransactionDTO {
 
 	private String purpose;
 
-	private BigDecimal amount;
+	private Long amount;
 }

@@ -57,6 +57,9 @@ public class UserService implements IUserService, UserDetailsService {
 	@Autowired
 	private IForgotPasswordService forgotPasswordService;
 
+	@Autowired
+	private IWatchListService watchListService;
+
 	@Override
 	public AuthResponse register(UserDTO userDTO) throws Exception {
 		UserEntity userEntity = new UserEntity();
@@ -72,6 +75,8 @@ public class UserService implements IUserService, UserDetailsService {
 		userEntity.setPassword(hashedPassword);
 		userEntity.setMobileNo(userDTO.getMobileNo());
 		userEntity = userRepository.save(userEntity);
+		userDTO.setId(userEntity.getId());
+		watchListService.createWatchlist(userDTO);
 		Authentication auth = new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword());
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		String jwt = JwtProvider.generateToken(auth);

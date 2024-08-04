@@ -76,11 +76,11 @@ public class CoinService implements ICoinService {
 			coinEntity.setTotalVolume(marketData.get("total_volume").get("usd").asLong());
 			coinEntity.setHigh24h(marketData.get("high_24h").get("usd").asDouble());
 			coinEntity.setLow24h(marketData.get("low_24h").get("usd").asDouble());
-			coinEntity.setPriceChange24h(marketData.get("price_change2_4h").get("usd").asDouble());
-			coinEntity.setPriceChangePercentage24h(marketData.get("price_change2_24h").get("usd").asDouble());
+			coinEntity.setPriceChange24h(marketData.get("price_change_24h").asDouble());
+			coinEntity.setPriceChangePercentage24h(marketData.get("price_change_percentage_24h").asDouble());
 			coinEntity.setMarketCapChange24h(marketData.get("market_cap_change_24h").asLong());
 			coinEntity.setMarketCapChangePercentage24h(marketData.get("market_cap_change_percentage_24h").asLong());
-			coinEntity.setTotalSupply(marketData.get("total_supply").get("usd").asLong());
+			coinEntity.setTotalSupply(marketData.get("total_supply").asLong());
 			coinRespository.save(coinEntity);
 			return jsonNode;
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
@@ -107,13 +107,13 @@ public class CoinService implements ICoinService {
 
 	@Override
 	public JsonNode getTop50CoinByMarketCap() throws Exception {
-		String url = "https://api.coingecko.com/api/v3/coins/markets/vs_currency=usd&per_page=50&page=1";
+		String url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=50&page=1";
 		return getData(url);
 	}
 
 	@Override
-	public JsonNode getTradingCoin() throws Exception {
-		String url = "https://api.coingecko.com/api/v3/search/treading";
+	public JsonNode getTrendingCoin() throws Exception {
+		String url = "https://api.coingecko.com/api/v3/search/trending";
 		return getData(url);
 
 	}

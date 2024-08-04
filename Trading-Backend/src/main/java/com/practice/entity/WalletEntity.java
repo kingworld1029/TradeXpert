@@ -28,6 +28,6 @@ public class WalletEntity {
 	@OneToOne
 	private UserEntity userEntity;
 
-	private BigDecimal balance;
+	private BigDecimal balance = BigDecimal.ZERO;
 
 }

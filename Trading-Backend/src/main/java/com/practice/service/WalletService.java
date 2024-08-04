@@ -35,12 +35,16 @@ public class WalletService implements IWalletService {
 		if (walletEntity == null) {
 			walletEntity = new WalletEntity();
 			walletEntity.setUserEntity(ConverterUtility.convertUserDTOToEntity(userDTO));
+			walletRepository.save(walletEntity);
 		}
 		return ConverterUtility.convertWalletEntityToDTO(walletEntity);
 	}
 
 	@Override
 	public WalletDTO addBalance(WalletDTO walletDTO, BigDecimal money) {
+		if (walletDTO.getBalance() == null) {
+			walletDTO.setBalance(new BigDecimal(0));
+		}
 		walletDTO.setBalance(walletDTO.getBalance().add(money));
 		WalletEntity walletEntity = ConverterUtility.convertWalletDTOToEntity(walletDTO);
 		walletEntity = walletRepository.save(walletEntity);

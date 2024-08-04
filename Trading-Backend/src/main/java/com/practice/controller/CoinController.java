@@ -29,23 +29,24 @@ public class CoinController {
 	private ICoinService coinService;
 
 	@GetMapping
-	ResponseEntity<List<CoinDTO>> getCoinList(@RequestParam("page") int page) throws Exception {
+	ResponseEntity<List<CoinDTO>> getCoinList(@RequestParam(name = "page", required = false) int page)
+			throws Exception {
 		List<CoinDTO> coinList = coinService.getCoinList(page);
 		return new ResponseEntity<>(coinList, HttpStatus.ACCEPTED);
 
 	}
 
 	@GetMapping("/getMarketChart/{coinId}")
-	ResponseEntity<JsonNode> getMarketChart(@PathVariable String coinid, @RequestParam("days") int days)
+	ResponseEntity<JsonNode> getMarketChart(@PathVariable String coinId, @RequestParam("days") int days)
 			throws Exception {
-		JsonNode jsonNode = coinService.getMarketChart(coinid, days);
+		JsonNode jsonNode = coinService.getMarketChart(coinId, days);
 		return new ResponseEntity<>(jsonNode, HttpStatus.ACCEPTED);
 
 	}
 
 	@GetMapping("/details/{coinId}")
-	ResponseEntity<JsonNode> getCoinDetails(@PathVariable String coinid) throws Exception {
-		JsonNode jsonNode = coinService.getCoinDetails(coinid);
+	ResponseEntity<JsonNode> getCoinDetails(@PathVariable String coinId) throws Exception {
+		JsonNode jsonNode = coinService.getCoinDetails(coinId);
 		return new ResponseEntity<>(jsonNode, HttpStatus.ACCEPTED);
 
 	}
@@ -64,9 +65,9 @@ public class CoinController {
 
 	}
 
-	@GetMapping("/trading")
-	ResponseEntity<JsonNode> getTradingCoin() throws Exception {
-		JsonNode jsonNode = coinService.getTradingCoin();
+	@GetMapping("/trending")
+	ResponseEntity<JsonNode> getTrendingCoin() throws Exception {
+		JsonNode jsonNode = coinService.getTrendingCoin();
 		return ResponseEntity.ok(jsonNode);
 
 	}

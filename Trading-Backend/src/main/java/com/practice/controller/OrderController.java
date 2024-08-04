@@ -65,8 +65,8 @@ public class OrderController {
 
 	}
 
-	@GetMapping("/")
-	public ResponseEntity<List<OrderDTO>> getAllOrder(@RequestHeader("Authorization") String jwt,
+	@GetMapping()
+	public ResponseEntity<List<OrderDTO>> getAllOrdersOfUsers(@RequestHeader("Authorization") String jwt,
 			@RequestParam(value = "order_type", required = false) ORDER_TYPE orderType,
 			@RequestParam(value = "asset_symbol", required = false) String assetSymbol) throws Exception {
 		Long userId = userService.findUserProfileByJwt(jwt).getId();

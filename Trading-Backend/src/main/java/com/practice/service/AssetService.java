@@ -34,12 +34,12 @@ public class AssetService implements IAssetService {
 	private ICoinService coinService;
 
 	@Override
-	public AssetDTO createAsset(UserDTO userDTO, CoinDTO coinDTO, double quantity) {
+	public AssetDTO createAsset(UserEntity userEntity, CoinEntity coinEntity, double quantity) {
 		AssetEntity assetEntity = new AssetEntity();
-		assetEntity.setUserEntity(ConverterUtility.convertUserDTOToEntity(userDTO));
-		assetEntity.setCoinEntity(ConverterUtility.convertCoinDTOToEntity(coinDTO));
+		assetEntity.setUserEntity(userEntity);
+		assetEntity.setCoinEntity(coinEntity);
 		assetEntity.setQuantity(quantity);
-		assetEntity.setBuyPrice(coinDTO.getCurrentPrice());
+		assetEntity.setBuyPrice(coinEntity.getCurrentPrice());
 		assetRepository.save(assetEntity);
 		return ConverterUtility.convertAssetEntityToDTO(assetEntity);
 	}

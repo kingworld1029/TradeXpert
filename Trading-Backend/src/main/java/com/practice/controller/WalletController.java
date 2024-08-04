@@ -3,6 +3,8 @@
  */
 package com.practice.controller;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +60,7 @@ public class WalletController {
 		UserDTO senderUserDTO = userService.findUserProfileByJwt(jwt);
 		WalletDTO receiverWalletDTO = walletService.findById(walletId);
 		WalletDTO walletDTO = walletService.walletToWalletTransfer(senderUserDTO, receiverWalletDTO,
-				walletTransactionDTO.getAmount());
+				BigDecimal.valueOf(walletTransactionDTO.getAmount()));
 		return new ResponseEntity<>(walletDTO, HttpStatus.ACCEPTED);
 	}
 

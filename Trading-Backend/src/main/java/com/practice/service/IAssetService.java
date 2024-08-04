@@ -8,13 +8,15 @@ import java.util.List;
 import com.practice.dto.AssetDTO;
 import com.practice.dto.CoinDTO;
 import com.practice.dto.UserDTO;
+import com.practice.entity.CoinEntity;
+import com.practice.entity.UserEntity;
 
 /**
  * 
  */
 public interface IAssetService {
 
-	AssetDTO createAsset(UserDTO userDTO, CoinDTO coinDTO, double quantity);
+	AssetDTO createAsset(UserEntity userEntity, CoinEntity coinEntity, double quantity);
 
 	AssetDTO getAssetById(Long assetId) throws Exception;
 

@@ -25,12 +25,9 @@ public class WatchListService implements IWatchListService {
 	@Autowired
 	private WatchListRepository watchListRepository;
 
-	@Autowired
-	private IUserService userService;
-
 	@Override
-	public WatchListDTO findUserWatchList(Long userId) throws Exception {
-		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userService.findUserById(userId));
+	public WatchListDTO findUserWatchList(UserDTO userDTO) throws Exception {
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userDTO);
 		WatchListEntity watchListEntity = watchListRepository.findByUserEntity(userEntity);
 		if (watchListEntity == null) {
 			throw new Exception("WatchList Not Found");
@@ -57,7 +54,7 @@ public class WatchListService implements IWatchListService {
 
 	@Override
 	public CoinDTO addItemToWatchList(CoinDTO coinDTO, UserDTO userDTO) throws Exception {
-		WatchListDTO watchListDTO = findUserWatchList(userDTO.getId());
+		WatchListDTO watchListDTO = findUserWatchList(userDTO);
 		if (watchListDTO.getCoinDTOs().contains(coinDTO)) {
 			watchListDTO.getCoinDTOs().remove(coinDTO);
 		} else {

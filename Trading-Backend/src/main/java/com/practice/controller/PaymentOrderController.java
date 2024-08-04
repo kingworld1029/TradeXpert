@@ -41,7 +41,7 @@ public class PaymentOrderController {
 				paymentMethod);
 		String response = null;
 		if (paymentMethod.equals(PAYMENT_METHOD.RAZORPAY)) {
-			response = paymentOrderService.createRazorPaymentLink(userDTO, amount);
+			response = paymentOrderService.createRazorPaymentLink(userDTO, amount, paymentOrderDTO.getId());
 		} else if (paymentMethod.equals(PAYMENT_METHOD.STRIPE)) {
 			response = paymentOrderService.createStripePaymentLink(userDTO, amount, paymentOrderDTO.getId());
 		} else {
