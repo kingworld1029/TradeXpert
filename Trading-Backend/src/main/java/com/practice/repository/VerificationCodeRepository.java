@@ -5,6 +5,7 @@ package com.practice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.practice.entity.UserEntity;
 import com.practice.entity.VerificationCodeEntity;
 
 /**
@@ -12,5 +13,5 @@ import com.practice.entity.VerificationCodeEntity;
  */
 public interface VerificationCodeRepository extends JpaRepository<VerificationCodeEntity, Long>{
 
-	public VerificationCodeEntity findByUserId(Long userId);
+	public VerificationCodeEntity findByUserEntity(UserEntity userEntity);
 }

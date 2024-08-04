@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.practice.dto.CoinDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.WatchListDTO;
+import com.practice.entity.UserEntity;
 import com.practice.entity.WatchListEntity;
 import com.practice.repository.WatchListRepository;
 import com.practice.utils.ConverterUtility;
@@ -24,9 +25,13 @@ public class WatchListService implements IWatchListService {
 	@Autowired
 	private WatchListRepository watchListRepository;
 
+	@Autowired
+	private IUserService userService;
+
 	@Override
 	public WatchListDTO findUserWatchList(Long userId) throws Exception {
-		WatchListEntity watchListEntity = watchListRepository.findByUserId(userId);
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userService.findUserById(userId));
+		WatchListEntity watchListEntity = watchListRepository.findByUserEntity(userEntity);
 		if (watchListEntity == null) {
 			throw new Exception("WatchList Not Found");
 		}

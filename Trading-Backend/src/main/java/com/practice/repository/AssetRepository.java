@@ -8,14 +8,16 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.practice.entity.AssetEntity;
+import com.practice.entity.CoinEntity;
+import com.practice.entity.UserEntity;
 
 /**
  * 
  */
 public interface AssetRepository extends JpaRepository<AssetEntity, Long> {
 
-	List<AssetEntity> findByUserId(Long userId);
+	List<AssetEntity> findByUserEntity(UserEntity userEntity);
 
-	AssetEntity findAssetByUserIdAndCoinId(Long userid, String coinId);
+	AssetEntity findByUserEntityAndCoinEntity(UserEntity userEntity, CoinEntity coinEntity);
 
 }

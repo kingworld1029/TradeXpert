@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.practice.dto.UserDTO;
 import com.practice.dto.WithdrawalDTO;
+import com.practice.entity.UserEntity;
 import com.practice.entity.WithdrawalEntity;
 import com.practice.helper.HelperEnum.WITHDRAWAL_STATUS;
 import com.practice.repository.WithdrawalRepository;
@@ -57,7 +58,8 @@ public class WithdrawalService implements IWithdrawalService {
 
 	@Override
 	public List<WithdrawalDTO> getUserWithdrawalHistory(UserDTO userDTO) {
-		List<WithdrawalEntity> withdrawalEntityList = withdrawalRepository.findByUserId(userDTO.getId());
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userDTO);
+		List<WithdrawalEntity> withdrawalEntityList = withdrawalRepository.findByUserEntity(userEntity);
 		List<WithdrawalDTO> withdrawalDTOList = withdrawalEntityList.stream()
 				.map(ConverterUtility::convertWithdrawalEntityToDTO).collect(Collectors.toList());
 		return withdrawalDTOList;

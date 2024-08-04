@@ -23,7 +23,6 @@ import com.practice.helper.HelperEnum.ORDER_TYPE;
 import com.practice.service.ICoinService;
 import com.practice.service.IOrderService;
 import com.practice.service.IUserService;
-import com.practice.service.IWalletTransactionService;
 
 /**
  * 
@@ -40,9 +39,6 @@ public class OrderController {
 
 	@Autowired
 	private ICoinService coinService;
-
-	@Autowired
-	private IWalletTransactionService walletTransactionService;
 
 	@PostMapping("/pay")
 	public ResponseEntity<OrderDTO> payOrderPayment(@RequestHeader("Authorization") String jwt,

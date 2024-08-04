@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.practice.dto.OrderDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.WalletDTO;
+import com.practice.entity.UserEntity;
 import com.practice.entity.WalletEntity;
 import com.practice.helper.HelperEnum.ORDER_TYPE;
 import com.practice.repository.WalletRepository;
@@ -29,7 +30,8 @@ public class WalletService implements IWalletService {
 
 	@Override
 	public WalletDTO getUserWallet(UserDTO userDTO) {
-		WalletEntity walletEntity = walletRepository.findByUserId(userDTO.getId());
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userDTO);
+		WalletEntity walletEntity = walletRepository.findByUserEntity(userEntity);
 		if (walletEntity == null) {
 			walletEntity = new WalletEntity();
 			walletEntity.setUserEntity(ConverterUtility.convertUserDTOToEntity(userDTO));

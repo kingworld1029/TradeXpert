@@ -20,11 +20,11 @@ public interface IAssetService {
 
 	AssetDTO getAssetByUserIdAndId(Long userId, Long assetId);
 
-	List<AssetDTO> getUserAssets(Long userId);
+	List<AssetDTO> getUserAssets(Long userId) throws Exception;
 
 	AssetDTO updateAssest(Long assetId, double quantity) throws Exception;
 
-	AssetDTO findAssetByUserIdAndCoinId(Long userId, String coinId);
+	AssetDTO findAssetByUserIdAndCoinId(Long userId, String coinId)throws Exception;
 
 	void deleteAsset(Long assetId);
 

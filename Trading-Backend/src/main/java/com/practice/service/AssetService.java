@@ -13,6 +13,8 @@ import com.practice.dto.AssetDTO;
 import com.practice.dto.CoinDTO;
 import com.practice.dto.UserDTO;
 import com.practice.entity.AssetEntity;
+import com.practice.entity.CoinEntity;
+import com.practice.entity.UserEntity;
 import com.practice.repository.AssetRepository;
 import com.practice.utils.ConverterUtility;
 
@@ -24,6 +26,12 @@ public class AssetService implements IAssetService {
 
 	@Autowired
 	private AssetRepository assetRepository;
+
+	@Autowired
+	private IUserService userService;
+
+	@Autowired
+	private ICoinService coinService;
 
 	@Override
 	public AssetDTO createAsset(UserDTO userDTO, CoinDTO coinDTO, double quantity) {
@@ -49,8 +57,9 @@ public class AssetService implements IAssetService {
 	}
 
 	@Override
-	public List<AssetDTO> getUserAssets(Long userId) {
-		List<AssetEntity> assetEntityList = assetRepository.findByUserId(userId);
+	public List<AssetDTO> getUserAssets(Long userId) throws Exception {
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userService.findUserById(userId));
+		List<AssetEntity> assetEntityList = assetRepository.findByUserEntity(userEntity);
 		List<AssetDTO> assetDTOList = assetEntityList.stream().map(ConverterUtility::convertAssetEntityToDTO)
 				.collect(Collectors.toList());
 		return assetDTOList;
@@ -65,8 +74,10 @@ public class AssetService implements IAssetService {
 	}
 
 	@Override
-	public AssetDTO findAssetByUserIdAndCoinId(Long userId, String coinId) {
-		AssetEntity assetEntity = assetRepository.findAssetByUserIdAndCoinId(userId, coinId);
+	public AssetDTO findAssetByUserIdAndCoinId(Long userId, String coinId) throws Exception {
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userService.findUserById(userId));
+		CoinEntity coinEntity = ConverterUtility.convertCoinDTOToEntity(coinService.findById(coinId));
+		AssetEntity assetEntity = assetRepository.findByUserEntityAndCoinEntity(userEntity, coinEntity);
 		return ConverterUtility.convertAssetEntityToDTO(assetEntity);
 	}
 

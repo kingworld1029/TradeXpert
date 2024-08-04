@@ -24,7 +24,6 @@ import com.practice.dto.WithdrawalDTO;
 import com.practice.helper.HelperEnum.WALLET_TRANS_TYPE;
 import com.practice.service.IUserService;
 import com.practice.service.IWalletService;
-import com.practice.service.IWalletTransactionService;
 import com.practice.service.IWithdrawalService;
 
 /**
@@ -43,9 +42,6 @@ public class WithdrawalController {
 	@Autowired
 	private IUserService userService;
 
-	@Autowired
-	private IWalletTransactionService walletTransactionService;
-
 	@PostMapping("/withdrawal/{amount}")
 	public ResponseEntity<?> withdrawalReqeust(@RequestHeader("Authorization") String jwt, @PathVariable Long amount)
 			throws Exception {
@@ -53,8 +49,8 @@ public class WithdrawalController {
 		WalletDTO walletDTO = walletService.getUserWallet(userDTO);
 		WithdrawalDTO withdrawalDTO = withdrawalService.requestWithdrawal(BigDecimal.valueOf(amount), userDTO);
 		walletService.addBalance(walletDTO, BigDecimal.valueOf(-amount));
-		WalletTransactionDTO walletTransactionDTO = walletTransactionService.createTransaction(userDTO,
-				WALLET_TRANS_TYPE.WITHDRAWAL, null, "bank account withdrawal", withdrawalDTO.getAmount());
+//		WalletTransactionDTO walletTransactionDTO = walletTransactionService.createTransaction(userDTO,
+//				WALLET_TRANS_TYPE.WITHDRAWAL, null, "bank account withdrawal", withdrawalDTO.getAmount());
 		return new ResponseEntity<>(withdrawalDTO, HttpStatus.OK);
 	}
 

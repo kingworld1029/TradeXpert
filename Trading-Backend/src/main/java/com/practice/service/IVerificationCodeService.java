@@ -16,7 +16,7 @@ public interface IVerificationCodeService {
 	
 	VerificationCodeDTO getVerificationCodeById(Long id) throws Exception;
 	
-	VerificationCodeDTO getVerificationCodeByUser(Long userId);
+	VerificationCodeDTO getVerificationCodeByUser(Long userId) throws Exception;
 	
 	void deleteVerificationCode(VerificationCodeDTO verificationCodeDTO);
 }

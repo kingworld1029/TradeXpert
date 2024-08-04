@@ -43,7 +43,7 @@ public class TwoFactorOTPService implements ITwoFactorOTPService {
 
 	@Override
 	public TwoFactorOTPDTO findByUser(UserEntity userEntity) {
-		TwoFactorOTPEntity twoFactorOTPEntity = twoFactorOTPRepository.findByUser(userEntity);
+		TwoFactorOTPEntity twoFactorOTPEntity = twoFactorOTPRepository.findByUserEntity(userEntity);
 
 		return ConverterUtility.convertOTPEntityToDTO(twoFactorOTPEntity);
 	}

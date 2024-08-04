@@ -46,6 +46,9 @@ public class OrderService implements IOrderService {
 	@Autowired
 	private IAssetService assetService;
 
+	@Autowired
+	private IUserService userService;
+	
 	@Override
 	public OrderDTO createOrder(UserDTO userDTO, OrderItemDTO orderItemDTO, ORDER_TYPE orderType) {
 		double price = orderItemDTO.getCoinDTO().getCurrentPrice() * orderItemDTO.getQuantity();
@@ -67,8 +70,9 @@ public class OrderService implements IOrderService {
 	}
 
 	@Override
-	public List<OrderDTO> getAllOrdersOfUsers(Long userId, ORDER_TYPE orderType, String assetSymbo) {
-		List<OrderEntity> orderEntityList = orderRepository.findByuserId(userId);
+	public List<OrderDTO> getAllOrdersOfUsers(Long userId, ORDER_TYPE orderType, String assetSymbo) throws Exception {
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userService.findUserById(userId));
+		List<OrderEntity> orderEntityList = orderRepository.findByUserEntity(userEntity);
 		List<OrderDTO> orderDTOList = orderEntityList.stream().map(ConverterUtility::convertOrderEntityToDTO)
 				.collect(Collectors.toList());
 		return orderDTOList;

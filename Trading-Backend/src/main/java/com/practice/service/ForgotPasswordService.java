@@ -15,6 +15,7 @@ import com.practice.entity.ForgotPasswordTokenEntity;
 import com.practice.entity.UserEntity;
 import com.practice.helper.HelperEnum.VERIFICATION_TYPE;
 import com.practice.repository.ForgotPasswordTokenRepository;
+import com.practice.utils.ConverterUtility;
 
 /**
  * 
@@ -50,8 +51,9 @@ public class ForgotPasswordService implements IForgotPasswordService {
 	}
 
 	@Override
-	public ForgotPasswordTokenDTO findByUser(Long userId) {
-		ForgotPasswordTokenEntity forgotPasswordTokenEntity = forgotPasswordTokenRepository.findByUserId(userId);
+	public ForgotPasswordTokenDTO findByUser(UserDTO userDTO) throws Exception {
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userDTO);
+		ForgotPasswordTokenEntity forgotPasswordTokenEntity = forgotPasswordTokenRepository.findByUserEntity(userEntity);
 		return covertEntityToDTO(forgotPasswordTokenEntity);
 	}
 

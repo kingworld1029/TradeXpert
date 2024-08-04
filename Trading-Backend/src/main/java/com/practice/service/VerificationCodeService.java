@@ -26,6 +26,9 @@ public class VerificationCodeService implements IVerificationCodeService {
 
 	@Autowired
 	private VerificationCodeRepository verificationCodeRepository;
+	
+	@Autowired
+	private IUserService userService;
 
 	@Override
 	public VerificationCodeDTO sendveificationCode(UserDTO userDTO, VERIFICATION_TYPE verificationType) {
@@ -49,8 +52,9 @@ public class VerificationCodeService implements IVerificationCodeService {
 	}
 
 	@Override
-	public VerificationCodeDTO getVerificationCodeByUser(Long userId) {
-		VerificationCodeEntity verificationCodeEntity = verificationCodeRepository.findByUserId(userId);
+	public VerificationCodeDTO getVerificationCodeByUser(Long userId) throws Exception {
+		UserEntity userEntity = ConverterUtility.convertUserDTOToEntity(userService.findUserById(userId));
+		VerificationCodeEntity verificationCodeEntity = verificationCodeRepository.findByUserEntity(userEntity);
 		return ConverterUtility.convertCodeEntityToDTO(verificationCodeEntity);
 	}
 

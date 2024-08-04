@@ -16,7 +16,7 @@ public interface IForgotPasswordService {
 	
 	ForgotPasswordTokenDTO findById(String id);
 	
-	ForgotPasswordTokenDTO findByUser(Long userId);
+	ForgotPasswordTokenDTO findByUser(UserDTO userDTO) throws Exception;
 	
 	void deleteToken(ForgotPasswordTokenDTO forgotPasswordTokenDTO);
 }

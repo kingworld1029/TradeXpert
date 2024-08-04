@@ -21,7 +21,7 @@ import com.practice.service.IUserService;
  * 
  */
 @RestController
-@RequestMapping("/api/paymentDetails")
+@RequestMapping("/api")
 public class PaymentDetailController {
 
 	@Autowired
@@ -30,7 +30,7 @@ public class PaymentDetailController {
 	@Autowired
 	private IPaymentDetailService paymentDetailService;
 
-	@PostMapping
+	@PostMapping("/addPaymentDetails")
 	public ResponseEntity<PaymentDetailDTO> addPaymentDetails(@RequestBody PaymentDetailDTO requestPaymentDetailDTO,
 			@RequestHeader("Authorization") String jwt) throws Exception {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);
@@ -40,7 +40,7 @@ public class PaymentDetailController {
 		return new ResponseEntity<>(paymentDetailDTO, HttpStatus.CREATED);
 	}
 
-	@PostMapping
+	@PostMapping("/getUserPaymentDetail")
 	public ResponseEntity<PaymentDetailDTO> getUserPaymentDetail(@RequestHeader("Authorization") String jwt)
 			throws Exception {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);

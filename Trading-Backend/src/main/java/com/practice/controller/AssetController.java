@@ -31,7 +31,7 @@ public class AssetController {
 	@Autowired
 	private IUserService userService;
 
-	@GetMapping("/{assetId")
+	@GetMapping("/{assetId}")
 	public ResponseEntity<AssetDTO> getAssetById(@PathVariable Long assetId) throws Exception {
 		AssetDTO assetDTO = assetService.getAssetById(assetId);
 		return ResponseEntity.ok(assetDTO);

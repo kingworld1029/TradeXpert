@@ -200,7 +200,7 @@ public class UserService implements IUserService, UserDetailsService {
 		String otp = OtpUtility.generateOtp();
 		UUID uuid = UUID.randomUUID();
 		String id = uuid.toString();
-		ForgotPasswordTokenDTO forgotPasswordTokenDTO = forgotPasswordService.findByUser(userDTO.getId());
+		ForgotPasswordTokenDTO forgotPasswordTokenDTO = forgotPasswordService.findByUser(userDTO);
 		if (forgotPasswordTokenDTO == null) {
 			forgotPasswordTokenDTO = forgotPasswordService.createToken(userDTO, id, otp,
 					requestDTO.getVerificationType(), requestDTO.getSendTo());

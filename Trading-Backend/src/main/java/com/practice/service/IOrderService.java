@@ -20,7 +20,7 @@ public interface IOrderService {
 
 	OrderDTO getOrderById(Long orderId) throws Exception;
 
-	List<OrderDTO> getAllOrdersOfUsers(Long userId, ORDER_TYPE orderType, String assetSymbo);
+	List<OrderDTO> getAllOrdersOfUsers(Long userId, ORDER_TYPE orderType, String assetSymbo) throws Exception;
 
 	OrderDTO processOrder(CoinDTO coinDTO, double quantity, ORDER_TYPE orderType, UserDTO userDTO) throws Exception;
 }

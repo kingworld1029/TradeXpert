@@ -13,6 +13,6 @@ import com.practice.entity.UserEntity;
  */
 public interface TwoFactorOTPRepository extends JpaRepository<TwoFactorOTPEntity,String>{
 	
-	TwoFactorOTPEntity findByUser(UserEntity userEntity);
+	TwoFactorOTPEntity findByUserEntity(UserEntity userEntity);
 
 }
