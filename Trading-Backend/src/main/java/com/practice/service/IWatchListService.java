@@ -16,8 +16,8 @@ public interface IWatchListService {
 
 	WatchListDTO createWatchlist(UserDTO userDTO);
 
-	WatchListDTO findById(Long id);
+	WatchListDTO findById(Long id) throws Exception;
 
-	CoinDTO addItemToWatchList(CoinDTO coinDTO, UserDTO userDTO);
+	CoinDTO addItemToWatchList(CoinDTO coinDTO, UserDTO userDTO) throws Exception;
 
 }

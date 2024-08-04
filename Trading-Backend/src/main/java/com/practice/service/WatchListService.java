@@ -3,6 +3,8 @@
  */
 package com.practice.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,20 +35,31 @@ public class WatchListService implements IWatchListService {
 
 	@Override
 	public WatchListDTO createWatchlist(UserDTO userDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		WatchListEntity watchListEntity = new WatchListEntity();
+		watchListEntity.setUserEntity(ConverterUtility.convertUserDTOToEntity(userDTO));
+		watchListEntity = watchListRepository.save(watchListEntity);
+		return ConverterUtility.convertWatchListEntityToDTO(watchListEntity);
 	}
 
 	@Override
-	public WatchListDTO findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public WatchListDTO findById(Long id) throws Exception {
+		Optional<WatchListEntity> watchListEntity = watchListRepository.findById(id);
+		if (watchListEntity.isEmpty()) {
+			throw new Exception("WatchList Not found");
+		}
+		return ConverterUtility.convertWatchListEntityToDTO(watchListEntity.get());
 	}
 
 	@Override
-	public CoinDTO addItemToWatchList(CoinDTO coinDTO, UserDTO userDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	public CoinDTO addItemToWatchList(CoinDTO coinDTO, UserDTO userDTO) throws Exception {
+		WatchListDTO watchListDTO = findUserWatchList(userDTO.getId());
+		if (watchListDTO.getCoinDTOs().contains(coinDTO)) {
+			watchListDTO.getCoinDTOs().remove(coinDTO);
+		} else {
+			watchListDTO.getCoinDTOs().add(coinDTO);
+		}
+		watchListRepository.save(ConverterUtility.convertWatchListDTOToEntity(watchListDTO));
+		return coinDTO;
 	}
 
 }
