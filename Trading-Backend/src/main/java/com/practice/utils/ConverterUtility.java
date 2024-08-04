@@ -14,6 +14,7 @@ import com.practice.dto.CoinDTO;
 import com.practice.dto.OrderDTO;
 import com.practice.dto.OrderItemDTO;
 import com.practice.dto.PaymentDetailDTO;
+import com.practice.dto.PaymentOrderDTO;
 import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.VerificationCodeDTO;
@@ -25,6 +26,7 @@ import com.practice.entity.CoinEntity;
 import com.practice.entity.OrderEntity;
 import com.practice.entity.OrderItemEntity;
 import com.practice.entity.PaymentDetailEntity;
+import com.practice.entity.PaymentOrderEntity;
 import com.practice.entity.TwoFactorOTPEntity;
 import com.practice.entity.UserEntity;
 import com.practice.entity.VerificationCodeEntity;
@@ -335,6 +337,32 @@ public class ConverterUtility {
 				paymentDetailEntity.setUserEntity(convertUserDTOToEntity(paymentDetailDTO.getUserDTO()));
 			}
 			return paymentDetailEntity;
+		}
+		return null;
+
+	}
+
+	public static PaymentOrderDTO convertPaymentOrderEntityToDTO(PaymentOrderEntity paymentOrderEntity) {
+		PaymentOrderDTO paymentOrderDTO = new PaymentOrderDTO();
+		if (paymentOrderEntity != null) {
+			BeanUtils.copyProperties(paymentOrderEntity, paymentOrderDTO);
+			if (paymentOrderEntity.getUserEntity() != null) {
+				paymentOrderDTO.setUserDTO(convertUserEntityToDTO(paymentOrderEntity.getUserEntity()));
+			}
+			return paymentOrderDTO;
+		}
+		return null;
+
+	}
+
+	public static PaymentOrderEntity convertPaymentOrderDTOToEntity(PaymentOrderDTO paymentOrderDTO) {
+		PaymentOrderEntity paymentOrderEntity = new PaymentOrderEntity();
+		if (paymentOrderDTO != null) {
+			BeanUtils.copyProperties(paymentOrderDTO, paymentOrderEntity);
+			if (paymentOrderDTO.getUserDTO() != null) {
+				paymentOrderEntity.setUserEntity(convertUserDTOToEntity(paymentOrderDTO.getUserDTO()));
+			}
+			return paymentOrderEntity;
 		}
 		return null;
 

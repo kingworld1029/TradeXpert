@@ -33,4 +33,12 @@ public class HelperEnum {
 	public enum WITHDRAWAL_STATUS {
 		PENDING, SUCCESS, DECLINED
 	}
+
+	public enum PAYMENT_ORDER_STATUS {
+		PENDING, SUCCESS, FAILED
+	}
+
+	public enum PAYMENT_METHOD {
+		RAZORPAY, STRIPE
+	}
 }

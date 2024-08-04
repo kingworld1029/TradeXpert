@@ -46,7 +46,7 @@ public class OrderEntity {
 	@Column(nullable = false)
 	private ORDER_STATUS orderStatus;
 	
-	@OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+	@OneToOne(mappedBy = "orderEntity", cascade = CascadeType.ALL)
 	private OrderItemEntity orderItemEntity;
 
 }

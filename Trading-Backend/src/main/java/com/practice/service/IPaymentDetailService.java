@@ -9,7 +9,7 @@ import com.practice.dto.UserDTO;
 /**
  * 
  */
-public interface IPayementDetailService {
+public interface IPaymentDetailService {
 
 	PaymentDetailDTO addPaymnetDetail(String accountNumber, String accountHolderName, String ifsc, String bankName,
 			UserDTO userDTO);

@@ -1,5 +1,5 @@
 /**
- * @author arif.shaikh 03-Aug-2024
+   * @author arif.shaikh 03-Aug-2024
  */
 package com.practice.controller;
 
@@ -12,13 +12,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.practice.dto.OrderDTO;
+import com.practice.dto.PaymentOrderDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.WalletDTO;
 import com.practice.dto.WalletTransactionDTO;
 import com.practice.service.IOrderService;
+import com.practice.service.IPaymentOrderService;
 import com.practice.service.IUserService;
 import com.practice.service.IWalletService;
 
@@ -37,6 +40,9 @@ public class WalletController {
 
 	@Autowired
 	private IOrderService orderService;
+
+	@Autowired
+	private IPaymentOrderService paymentOrderService;
 
 	@GetMapping
 	public ResponseEntity<WalletDTO> getUserWallet(@RequestHeader("Authorization") String jwt) throws Exception {
@@ -62,6 +68,19 @@ public class WalletController {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);
 		OrderDTO orderDTO = orderService.getOrderById(orderId);
 		WalletDTO walletDTO = walletService.payOrderpayment(orderDTO, userDTO);
+		return new ResponseEntity<>(walletDTO, HttpStatus.ACCEPTED);
+	}
+
+	@PutMapping("/deposit")
+	public ResponseEntity<WalletDTO> addMoneyToWallet(@RequestHeader("Authorization") String jwt,
+			@RequestParam("order_id") Long orderId, @RequestParam("payment_id") String paymnetId) throws Exception {
+		UserDTO userDTO = userService.findUserProfileByJwt(jwt);
+		WalletDTO walletDTO = walletService.getUserWallet(userDTO);
+		PaymentOrderDTO paymentOrderDTO = paymentOrderService.getPaymentOrderById(orderId);
+		Boolean status = paymentOrderService.proceedPaymentOrder(paymentOrderDTO, paymnetId);
+		if (status) {
+			walletDTO = walletService.addBalance(walletDTO, paymentOrderDTO.getAmount());
+		}
 		return new ResponseEntity<>(walletDTO, HttpStatus.ACCEPTED);
 	}
 

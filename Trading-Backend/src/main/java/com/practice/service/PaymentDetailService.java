@@ -14,7 +14,7 @@ import com.practice.utils.ConverterUtility;
 /**
  * 
  */
-public class PaymentDetailService implements IPayementDetailService {
+public class PaymentDetailService implements IPaymentDetailService {
 
 	@Autowired
 	private PaymentDetailReposiory paymentDetailReposiory;
