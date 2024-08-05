@@ -4,18 +4,19 @@
 package com.practice.service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.practice.dto.OrderDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.WalletDTO;
+import com.practice.dto.WalletTransactionDTO;
 import com.practice.entity.UserEntity;
 import com.practice.entity.WalletEntity;
 import com.practice.helper.HelperEnum.ORDER_TYPE;
+import com.practice.helper.HelperEnum.WALLET_TRANS_TYPE;
 import com.practice.repository.WalletRepository;
 import com.practice.utils.ConverterUtility;
 
@@ -94,6 +95,19 @@ public class WalletService implements IWalletService {
 		WalletEntity walletEntity = ConverterUtility.convertWalletDTOToEntity(walletDTO);
 		walletRepository.save(walletEntity);
 		return ConverterUtility.convertWalletEntityToDTO(walletEntity);
+	}
+
+	@Override
+	public WalletTransactionDTO createTransaction(UserDTO userDTO, WALLET_TRANS_TYPE withdrawal, Object object,
+			String string, BigDecimal amount) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<WalletTransactionDTO> getTransactionByWallet(WalletDTO walletDTO) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

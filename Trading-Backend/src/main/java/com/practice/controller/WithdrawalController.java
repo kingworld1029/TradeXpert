@@ -49,8 +49,8 @@ public class WithdrawalController {
 		WalletDTO walletDTO = walletService.getUserWallet(userDTO);
 		WithdrawalDTO withdrawalDTO = withdrawalService.requestWithdrawal(BigDecimal.valueOf(amount), userDTO);
 		walletService.addBalance(walletDTO, BigDecimal.valueOf(-amount));
-//		WalletTransactionDTO walletTransactionDTO = walletTransactionService.createTransaction(userDTO,
-//				WALLET_TRANS_TYPE.WITHDRAWAL, null, "bank account withdrawal", withdrawalDTO.getAmount());
+		walletService.createTransaction(userDTO, WALLET_TRANS_TYPE.WITHDRAWAL, null, "bank account withdrawal",
+				withdrawalDTO.getAmount());
 		return new ResponseEntity<>(withdrawalDTO, HttpStatus.OK);
 	}
 

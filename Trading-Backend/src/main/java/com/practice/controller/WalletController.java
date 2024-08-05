@@ -4,6 +4,7 @@
 package com.practice.controller;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -84,6 +85,16 @@ public class WalletController {
 			walletDTO = walletService.addBalance(walletDTO, paymentOrderDTO.getAmount());
 		}
 		return new ResponseEntity<>(walletDTO, HttpStatus.ACCEPTED);
+	}
+	
+	@GetMapping("/transaction")
+	public ResponseEntity<List<WalletTransactionDTO>> getUserWalletTransactions(
+			@RequestHeader("Authorization") String jwt) throws Exception {
+		UserDTO userDTO = userService.findUserProfileByJwt(jwt);
+		WalletDTO walletDTO = walletService.getUserWallet(userDTO);
+		List<WalletTransactionDTO> transactionDTOList = walletService.getTransactionByWallet(walletDTO);
+		return new ResponseEntity<>(transactionDTOList, HttpStatus.ACCEPTED);
+
 	}
 
 }
