@@ -35,7 +35,7 @@ public interface IWalletService {
 	 * @param amount
 	 * @return
 	 */
-	WalletTransactionDTO createTransaction(UserDTO userDTO, WALLET_TRANS_TYPE withdrawal, Object object, String string,
+	WalletTransactionDTO createTransaction(UserDTO userDTO, WALLET_TRANS_TYPE walletTransType, WalletDTO walletDTO , String purpose,
 			BigDecimal amount);
 
 	/**

@@ -87,7 +87,7 @@ public class WalletController {
 		return new ResponseEntity<>(walletDTO, HttpStatus.ACCEPTED);
 	}
 	
-	@GetMapping("/transaction")
+	@GetMapping("/transactions")
 	public ResponseEntity<List<WalletTransactionDTO>> getUserWalletTransactions(
 			@RequestHeader("Authorization") String jwt) throws Exception {
 		UserDTO userDTO = userService.findUserProfileByJwt(jwt);

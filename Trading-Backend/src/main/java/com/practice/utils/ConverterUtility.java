@@ -19,6 +19,7 @@ import com.practice.dto.TwoFactorOTPDTO;
 import com.practice.dto.UserDTO;
 import com.practice.dto.VerificationCodeDTO;
 import com.practice.dto.WalletDTO;
+import com.practice.dto.WalletTransactionDTO;
 import com.practice.dto.WatchListDTO;
 import com.practice.dto.WithdrawalDTO;
 import com.practice.entity.AssetEntity;
@@ -31,6 +32,7 @@ import com.practice.entity.TwoFactorOTPEntity;
 import com.practice.entity.UserEntity;
 import com.practice.entity.VerificationCodeEntity;
 import com.practice.entity.WalletEntity;
+import com.practice.entity.WalletTransactionEntity;
 import com.practice.entity.WatchListEntity;
 import com.practice.entity.WithdrawalEntity;
 
@@ -363,6 +365,32 @@ public class ConverterUtility {
 				paymentOrderEntity.setUserEntity(convertUserDTOToEntity(paymentOrderDTO.getUserDTO()));
 			}
 			return paymentOrderEntity;
+		}
+		return null;
+
+	}
+
+	public static WalletTransactionEntity convertWalletTransDTOToEntity(WalletTransactionDTO walletTransactionDTO) {
+		WalletTransactionEntity walletTransactionEntity = new WalletTransactionEntity();
+		if (walletTransactionDTO != null) {
+			BeanUtils.copyProperties(walletTransactionDTO, walletTransactionEntity);
+			if (walletTransactionDTO.getWalletDTO() != null) {
+				walletTransactionEntity.setWalletEntity(convertWalletDTOToEntity(walletTransactionDTO.getWalletDTO()));
+			}
+			return walletTransactionEntity;
+		}
+		return null;
+
+	}
+
+	public static WalletTransactionDTO convertWalletTransEntityToDTO(WalletTransactionEntity walletTransactionEntity) {
+		WalletTransactionDTO walletTransactionDTO = new WalletTransactionDTO();
+		if (walletTransactionEntity != null) {
+			BeanUtils.copyProperties(walletTransactionEntity, walletTransactionDTO);
+			if (walletTransactionEntity.getWalletEntity() != null) {
+				walletTransactionDTO.setWalletDTO(convertWalletEntityToDTO(walletTransactionEntity.getWalletEntity()));
+			}
+			return walletTransactionDTO;
 		}
 		return null;
 

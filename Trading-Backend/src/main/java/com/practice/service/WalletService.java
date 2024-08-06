@@ -4,8 +4,11 @@
 package com.practice.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +18,11 @@ import com.practice.dto.WalletDTO;
 import com.practice.dto.WalletTransactionDTO;
 import com.practice.entity.UserEntity;
 import com.practice.entity.WalletEntity;
+import com.practice.entity.WalletTransactionEntity;
 import com.practice.helper.HelperEnum.ORDER_TYPE;
 import com.practice.helper.HelperEnum.WALLET_TRANS_TYPE;
 import com.practice.repository.WalletRepository;
+import com.practice.repository.WalletTransactionRepository;
 import com.practice.utils.ConverterUtility;
 
 /**
@@ -28,6 +33,9 @@ public class WalletService implements IWalletService {
 
 	@Autowired
 	private WalletRepository walletRepository;
+
+	@Autowired
+	private WalletTransactionRepository walletTransactionRepository;
 
 	@Override
 	public WalletDTO getUserWallet(UserDTO userDTO) {
@@ -98,16 +106,26 @@ public class WalletService implements IWalletService {
 	}
 
 	@Override
-	public WalletTransactionDTO createTransaction(UserDTO userDTO, WALLET_TRANS_TYPE withdrawal, Object object,
-			String string, BigDecimal amount) {
-		// TODO Auto-generated method stub
-		return null;
+	public WalletTransactionDTO createTransaction(UserDTO userDTO, WALLET_TRANS_TYPE walletTransType,
+			WalletDTO walletDTO, String purpose, BigDecimal amount) {
+		WalletTransactionEntity walletTransactionEntity = new WalletTransactionEntity();
+		walletTransactionEntity.setWalletEntity(ConverterUtility.convertWalletDTOToEntity(walletDTO));
+		walletTransactionEntity.setAmount(amount);
+		walletTransactionEntity.setDate(LocalDateTime.now());
+		walletTransactionEntity.setPurpose(purpose);
+		walletTransactionEntity.setTransferId("");
+		walletTransactionEntity.setWalletTransType(walletTransType);
+		walletTransactionEntity = walletTransactionRepository.save(walletTransactionEntity);
+		return ConverterUtility.convertWalletTransEntityToDTO(walletTransactionEntity);
 	}
 
 	@Override
 	public List<WalletTransactionDTO> getTransactionByWallet(WalletDTO walletDTO) {
-		// TODO Auto-generated method stub
-		return null;
+		List<WalletTransactionEntity> walletTransactionEntityList = walletTransactionRepository
+				.findByWalletEntity(ConverterUtility.convertWalletDTOToEntity(walletDTO));
+		List<WalletTransactionDTO> walletTransactionDTOList = walletTransactionEntityList.stream()
+				.map(ConverterUtility::convertWalletTransEntityToDTO).collect(Collectors.toList());
+		return walletTransactionDTOList;
 	}
 
 }
