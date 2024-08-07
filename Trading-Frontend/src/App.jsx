@@ -1,12 +1,14 @@
-import { Button } from './components/ui/button'
-import Navbar from './pages/Navbar/Navbar'
+import { Button } from "./components/ui/button";
+import Home from "./pages/Home/Home";
+import Navbar from "./pages/Navbar/Navbar";
 
 function App() {
   return (
     <>
-      <Navbar/>
+      <Navbar />
+      <Home />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
